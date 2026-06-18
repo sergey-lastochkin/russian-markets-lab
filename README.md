@@ -112,8 +112,6 @@ The dashboard uses English as the default UI language, keeps Russian available t
 
 ![Risk engine](assets/risk_engine.png)
 
-![Execution simulator](assets/execution_simulator.png)
-
 ![Options surface](assets/options_surface.png)
 
 ## Methodology

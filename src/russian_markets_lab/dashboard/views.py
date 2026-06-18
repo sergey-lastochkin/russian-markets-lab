@@ -259,6 +259,22 @@ def numeric_series(df: pd.DataFrame, column: str) -> pd.Series:
     return pd.to_numeric(df[column], errors="coerce")
 
 
+def lookup_metric_value(metric_lookup: dict[object, object], *names: str) -> object:
+    """Return a metric value by trying exact and normalized metric names."""
+
+    normalized_lookup = {
+        str(key).strip().lower().replace("_", " "): value
+        for key, value in metric_lookup.items()
+    }
+    for name in names:
+        if name in metric_lookup:
+            return metric_lookup[name]
+        normalized = name.strip().lower().replace("_", " ")
+        if normalized in normalized_lookup:
+            return normalized_lookup[normalized]
+    return None
+
+
 def format_number(value: object, decimals: int = 2, lang: str = "en") -> str:
     """Format numbers for compact terminal cards."""
 
@@ -1044,33 +1060,41 @@ def render_risk_tab(lang: str = "ru") -> None:
         show_missing_data_message("risk_snapshot", lang)
     else:
         metrics = (
-            risk[risk["section"] == "portfolio_metrics"] if "section" in risk else risk
+            risk[risk["section"].isin(["portfolio", "portfolio_metrics"])]
+            if "section" in risk
+            else risk
         )
         metric_lookup = (
             metrics.set_index("metric")["value"].to_dict()
             if {"metric", "value"}.issubset(metrics.columns)
             else {}
         )
+        var_95 = lookup_metric_value(metric_lookup, "VaR 95%", "var_95", "var 95")
+        cvar_95 = lookup_metric_value(metric_lookup, "CVaR 95%", "cvar_95", "cvar 95")
+        volatility = lookup_metric_value(
+            metric_lookup, "annualized_volatility", "volatility"
+        )
+        max_dd = lookup_metric_value(metric_lookup, "max_drawdown", "max drawdown")
         metric_cards(
             [
                 (
                     "VaR 95",
-                    format_number(metric_lookup.get("var_95"), 4),
+                    format_number(var_95, 4),
                     ui(lang, "historical", "исторический"),
                 ),
                 (
                     "CVaR 95",
-                    format_number(metric_lookup.get("cvar_95"), 4),
+                    format_number(cvar_95, 4),
                     ui(lang, "historical", "исторический"),
                 ),
                 (
                     ui(lang, "Volatility", "Волатильность"),
-                    format_number(metric_lookup.get("volatility"), 4),
+                    format_number(volatility, 4),
                     ui(lang, "annualized", "годовая"),
                 ),
                 (
                     ui(lang, "Max drawdown", "Макс. просадка"),
-                    format_number(metric_lookup.get("max_drawdown"), 4),
+                    format_number(max_dd, 4),
                     ui(lang, "equity curve", "кривая капитала"),
                 ),
             ]
