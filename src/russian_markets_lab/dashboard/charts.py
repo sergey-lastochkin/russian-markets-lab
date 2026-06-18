@@ -227,11 +227,15 @@ def futures_basis_bar(basis: pd.DataFrame, lang: str = "en"):
 
 
 def options_smile_chart(chain: pd.DataFrame, lang: str = "en"):
-    """Build implied volatility smile chart."""
+    """Build a compact implied volatility profile by expiration."""
 
-    if not _has_columns(chain, {"strike", "implied_volatility", "expiration"}):
+    if not _has_columns(chain, {"implied_volatility", "expiration"}):
         return None
-    clean = chain.dropna(subset=["implied_volatility"]).copy()
+    clean = chain.copy()
+    clean["implied_volatility"] = pd.to_numeric(
+        clean["implied_volatility"], errors="coerce"
+    )
+    clean = clean.dropna(subset=["implied_volatility"]).copy()
     if clean.empty:
         return None
     clean["expiration_dt"] = pd.to_datetime(clean["expiration"], errors="coerce")
@@ -241,51 +245,63 @@ def options_smile_chart(chain: pd.DataFrame, lang: str = "en"):
     clean["expiration_label"] = clean["expiration"].map(
         lambda value: _format_date_label(value, lang)
     )
-    clean = clean.sort_values(["expiration_label", "strike"])
-    fig = px.line(
-        clean.head(500),
-        x="strike",
-        y="implied_volatility",
-        color="expiration_label",
-        markers=True,
-        color_discrete_sequence=QUALITATIVE,
+    profile = (
+        clean.groupby(["expiration_dt", "expiration_label"], dropna=False)
+        .agg(
+            median_iv=("implied_volatility", "median"),
+            contract_count=("implied_volatility", "size"),
+        )
+        .reset_index()
+        .sort_values("expiration_dt", na_position="last")
+    )
+    if profile.empty:
+        return None
+
+    fig = px.bar(
+        profile,
+        x="median_iv",
+        y="expiration_label",
+        orientation="h",
+        color_discrete_sequence=[ACCENT],
         labels={
-            "strike": _ui(lang, "Strike", "Страйк"),
-            "implied_volatility": _ui(
+            "expiration_label": _ui(lang, "Expiration", "Экспирация"),
+            "median_iv": _ui(
                 lang, "Implied volatility", "Подразумеваемая волатильность"
             ),
-            "expiration_label": _ui(lang, "Expiration", "Экспирация"),
+            "contract_count": _ui(lang, "Contracts", "Контракты"),
         },
     )
     fig.update_traces(
+        marker={"line": {"width": 0}, "opacity": 0.86},
+        width=0.56,
         hovertemplate=(
-            f"{_ui(lang, 'Strike', 'Страйк')}: %{{x}}<br>"
-            f"{_ui(lang, 'Implied volatility', 'Подразумеваемая волатильность')}: "
-            "%{y:.2%}<extra></extra>"
-        )
+            f"{_ui(lang, 'Expiration', 'Экспирация')}: %{{y}}<br>"
+            f"{_ui(lang, 'Median IV', 'Медианная подраз. вол.')}: "
+            "%{x:.2%}<br>"
+            f"{_ui(lang, 'Contracts', 'Контракты')}: "
+            "%{customdata[0]}<extra></extra>"
+        ),
     )
+    fig.update_traces(customdata=profile[["contract_count"]].to_numpy())
     themed = apply_chart_theme(
         fig,
         _ui(
             lang,
-            "Implied volatility smile",
-            "Улыбка подразумеваемой волатильности",
+            "Median implied volatility by expiration",
+            "Медианная подразумеваемая волатильность по экспирациям",
         ),
-        x_title=_ui(lang, "Strike", "Страйк"),
-        y_title=_ui(lang, "Implied volatility", "Подразумеваемая волатильность"),
+        x_title=_ui(lang, "Implied volatility", "Подразумеваемая волатильность"),
+        y_title=_ui(lang, "Expiration", "Экспирация"),
+    )
+    themed.update_yaxes(
+        type="category",
+        categoryorder="array",
+        categoryarray=profile["expiration_label"],
     )
     themed.update_layout(
-        legend_title_text=_ui(lang, "Expiration", "Экспирация"),
-        height=430,
-        legend={
-            "orientation": "h",
-            "yanchor": "top",
-            "y": -0.2,
-            "xanchor": "left",
-            "x": 0,
-            "font": {"size": 10, "color": MUTED, "family": FONT_STACK},
-        },
-        margin={"l": 58, "r": 18, "t": 58, "b": 112},
+        showlegend=False,
+        height=360,
+        margin={"l": 58, "r": 18, "t": 58, "b": 78},
     )
     return themed
 

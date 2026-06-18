@@ -89,7 +89,7 @@ Raw ISS snapshots are cached under `data/raw/<dataset_name>/<timestamp>.parquet`
 1. **MOEX Market Universe Scanner**: instruments, marketdata, candles, tradability and data quality.
 2. **Liquidity Radar**: liquidity scores, score components, turnover, spread proxy and volume spikes.
 3. **Futures Basis Monitor**: basis, annualized basis, liquidity filter and rich/fair/cheap screen.
-4. **Options Volatility Surface**: chain features, moneyness, time to expiry, IV, Greeks, smile and surface.
+4. **Options Volatility Surface**: chain features, moneyness, time to expiry, IV, Greeks, term profile and surface.
 5. **Portfolio Risk Engine**: historical risk metrics, drawdown, correlation and stress scenarios.
 6. **Execution Simulator**: spread crossing, slippage, market impact, fill-rate assumptions and cost comparison.
 7. **Strategy Research Lab**: strategy templates with cost sensitivity and failure analysis.
@@ -98,9 +98,23 @@ Raw ISS snapshots are cached under `data/raw/<dataset_name>/<timestamp>.parquet`
 
 ## Dashboard Screenshots
 
-Screenshots should be regenerated after running the current dashboard.
+Current screenshots were generated from the live Streamlit dashboard with processed datasets loaded and demo mode disabled.
 
-The dashboard uses English as the default UI language, keeps Russian available through the EN/RU selector, and is designed as a dark, dense internal markets research terminal. Stale screenshots are intentionally not embedded in this README.
+The dashboard uses English as the default UI language, keeps Russian available through the EN/RU selector, and is designed as a dark, dense internal markets research terminal.
+
+![Dashboard overview](assets/dashboard_overview.png)
+
+![Market map](assets/dashboard_market_map.png)
+
+![Liquidity radar](assets/liquidity_radar.png)
+
+![Futures basis](assets/futures_basis.png)
+
+![Risk engine](assets/risk_engine.png)
+
+![Execution simulator](assets/execution_simulator.png)
+
+![Options surface](assets/options_surface.png)
 
 ## Methodology
 
