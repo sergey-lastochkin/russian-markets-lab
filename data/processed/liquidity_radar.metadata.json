@@ -1,0 +1,45 @@
+{
+  "dataset_name": "liquidity_radar",
+  "source": "Processed from MOEX ISS market universe and marketdata",
+  "generated_at": "2026-06-18T05:16:03.721923+00:00",
+  "row_count": 30,
+  "columns": [
+    "ticker",
+    "name",
+    "board",
+    "market",
+    "avg_volume",
+    "avg_value",
+    "avg_daily_value",
+    "median_value",
+    "median_daily_value",
+    "realized_volatility",
+    "num_observations",
+    "last_close",
+    "tradable_flag",
+    "missing_close_ratio",
+    "missing_value_ratio",
+    "liquidity_rank",
+    "volatility_rank",
+    "data_quality_score",
+    "tradability_score",
+    "adv_bucket",
+    "volatility_bucket",
+    "liquidity_bucket",
+    "spread_bps",
+    "num_trades",
+    "turnover",
+    "liquidity_score"
+  ],
+  "endpoints": [
+    "TQBR marketdata",
+    "TQBR candles"
+  ],
+  "parameters": {},
+  "limitations": [
+    "Liquidity score is a first-pass diagnostic, not a perfect liquidity metric.",
+    "Public ISS data may omit full order book depth and broker-specific costs."
+  ],
+  "is_demo": false,
+  "data_delay_note": "MOEX ISS public/delayed data. Availability and delay depend on the endpoint."
+}

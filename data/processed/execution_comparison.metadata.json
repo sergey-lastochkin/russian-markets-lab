@@ -1,0 +1,28 @@
+{
+  "dataset_name": "execution_comparison",
+  "source": "Processed from liquidity snapshot assumptions",
+  "generated_at": "2026-06-18T05:16:16.057634+00:00",
+  "row_count": 4,
+  "columns": [
+    "execution_style",
+    "avg_slippage_bps",
+    "commission_bps",
+    "market_impact_bps",
+    "total_cost_bps",
+    "fill_rate",
+    "execution_risk",
+    "total_cost_rub"
+  ],
+  "endpoints": [
+    "liquidity_radar processed dataset"
+  ],
+  "parameters": {
+    "default_order_value": 1000000
+  },
+  "limitations": [
+    "Execution model is a simplified diagnostic.",
+    "No order book depth, queue position, broker routing or real order placement is modeled."
+  ],
+  "is_demo": false,
+  "data_delay_note": "MOEX ISS public/delayed data. Availability and delay depend on the endpoint."
+}

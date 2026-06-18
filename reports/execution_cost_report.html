@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Отчёт по стоимости исполнения</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 40px; color: #17202a; }
+    h1, h2 { color: #111827; }
+    .meta { color: #52606d; }
+    .research-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    .research-table th, .research-table td { border-bottom: 1px solid #e5e7eb; padding: 8px; text-align: right; }
+    .research-table th:first-child, .research-table td:first-child { text-align: left; }
+    .note { background: #f8fafc; border-left: 4px solid #64748b; padding: 12px 16px; }
+    .bars { margin: 12px 0 28px; }
+    .bar-row { align-items: center; display: grid; gap: 10px; grid-template-columns: 140px 1fr 110px; margin: 7px 0; }
+    .bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { background: #e5e7eb; border-radius: 4px; display: block; height: 12px; }
+    .bar-fill { background: #334155; border-radius: 4px; display: block; height: 12px; }
+    .bar-value { color: #475569; font-variant-numeric: tabular-nums; text-align: right; }
+  </style>
+</head>
+<body>
+
+<h1>Отчёт по стоимости исполнения / Execution Cost Report</h1>
+<p class="meta">Дата формирования / Generated: 2026-06-18</p>
+<h2>Источник данных / Data Source</h2>
+<p>Execution comparison строится из processed liquidity assumptions. Это модель диагностики стоимости, не модель отправки реальных заявок.</p>
+<h2>Метаданные / Metadata</h2>
+<table class="dataframe research-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>dataset</th>
+      <th>generated_at</th>
+      <th>row_count</th>
+      <th>source</th>
+      <th>is_demo</th>
+      <th>limitations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>execution_comparison</td>
+      <td>2026-06-18T05:16:16.057634+00:00</td>
+      <td>4</td>
+      <td>Processed from liquidity snapshot assumptions</td>
+      <td>False</td>
+      <td>Execution model is a simplified diagnostic.; No order book depth, queue position, broker routing or real order placement is modeled.</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Графики / Charts</h2>
+<h3>Total cost, bps</h3>
+<div class="bars">
+<div class="bar-row"><span class="bar-label">vwap</span><span class="bar-track"><span class="bar-fill" style="width:100.0%"></span></span><span class="bar-value">212</span></div>
+<div class="bar-row"><span class="bar-label">market</span><span class="bar-track"><span class="bar-fill" style="width:11.2%"></span></span><span class="bar-value">23.8</span></div>
+<div class="bar-row"><span class="bar-label">twap</span><span class="bar-track"><span class="bar-fill" style="width:6.4%"></span></span><span class="bar-value">13.49</span></div>
+<div class="bar-row"><span class="bar-label">limit</span><span class="bar-track"><span class="bar-fill" style="width:2.4%"></span></span><span class="bar-value">5</span></div>
+</div>
+<h2>Comparison Table</h2>
+<table class="dataframe research-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>execution_style</th>
+      <th>avg_slippage_bps</th>
+      <th>commission_bps</th>
+      <th>market_impact_bps</th>
+      <th>total_cost_bps</th>
+      <th>fill_rate</th>
+      <th>execution_risk</th>
+      <th>total_cost_rub</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>market</td>
+      <td>0.472490</td>
+      <td>5.0</td>
+      <td>18.325617</td>
+      <td>23.798107</td>
+      <td>1.0</td>
+      <td>low fill risk, higher immediacy cost</td>
+      <td>2379.810702</td>
+    </tr>
+    <tr>
+      <td>limit</td>
+      <td>0.000000</td>
+      <td>5.0</td>
+      <td>0.000000</td>
+      <td>5.000000</td>
+      <td>0.6</td>
+      <td>fill uncertainty</td>
+      <td>500.000000</td>
+    </tr>
+    <tr>
+      <td>twap</td>
+      <td>0.297873</td>
+      <td>5.0</td>
+      <td>8.195465</td>
+      <td>13.493338</td>
+      <td>1.0</td>
+      <td>schedule risk</td>
+      <td>1349.333804</td>
+    </tr>
+    <tr>
+      <td>vwap</td>
+      <td>3.661589</td>
+      <td>5.0</td>
+      <td>203.336489</td>
+      <td>211.998078</td>
+      <td>1.0</td>
+      <td>volume profile risk</td>
+      <td>21199.807775</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Ограничения / Limitations</h2>
+<p class="note">Модель не учитывает queue position, hidden liquidity, broker routing, market microstructure events и full depth order book.</p>
+<h2>Дисклеймер / Disclaimer</h2>
+<p>Проект предназначен только для исследовательских и образовательных целей. Он не является инвестиционной рекомендацией, торговым сигналом, брокерским сервисом или системой отправки реальных заявок. / This project is for research and educational purposes only. It does not provide investment advice, trading signals, brokerage functionality, or real-money execution.</p>
+
+</body>
+</html>

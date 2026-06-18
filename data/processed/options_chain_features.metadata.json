@@ -1,0 +1,39 @@
+{
+  "dataset_name": "options_chain_features",
+  "source": "MOEX ISS public/delayed data",
+  "generated_at": "2026-06-18T05:16:16.028477+00:00",
+  "row_count": 200,
+  "columns": [
+    "secid",
+    "shortname",
+    "option_type",
+    "strike",
+    "expiration",
+    "underlying",
+    "last",
+    "settleprice",
+    "market_price",
+    "volume",
+    "open_interest",
+    "spot",
+    "moneyness",
+    "time_to_expiry",
+    "implied_volatility",
+    "delta",
+    "gamma",
+    "vega",
+    "theta"
+  ],
+  "endpoints": [
+    "/engines/futures/markets/options/securities.json"
+  ],
+  "parameters": {
+    "max_contracts": 200
+  },
+  "limitations": [
+    "Black-Scholes assumptions are simplified for Russian rates, dividends and liquidity.",
+    "Implied volatility is NaN where inputs are invalid or solver fails."
+  ],
+  "is_demo": false,
+  "data_delay_note": "MOEX ISS public/delayed data. Availability and delay depend on the endpoint."
+}

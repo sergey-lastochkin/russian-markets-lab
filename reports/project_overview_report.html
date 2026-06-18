@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Russian Markets Lab - Project Overview</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 40px; color: #17202a; }
+    h1, h2 { color: #111827; }
+    .meta { color: #52606d; }
+    .research-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    .research-table th, .research-table td { border-bottom: 1px solid #e5e7eb; padding: 8px; text-align: right; }
+    .research-table th:first-child, .research-table td:first-child { text-align: left; }
+    .note { background: #f8fafc; border-left: 4px solid #64748b; padding: 12px 16px; }
+    .bars { margin: 12px 0 28px; }
+    .bar-row { align-items: center; display: grid; gap: 10px; grid-template-columns: 140px 1fr 110px; margin: 7px 0; }
+    .bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { background: #e5e7eb; border-radius: 4px; display: block; height: 12px; }
+    .bar-fill { background: #334155; border-radius: 4px; display: block; height: 12px; }
+    .bar-value { color: #475569; font-variant-numeric: tabular-nums; text-align: right; }
+  </style>
+</head>
+<body>
+
+<h1>Russian Markets Lab - Project Overview</h1>
+<p class="meta">Дата формирования / Generated: 2026-06-18</p>
+<h2>Positioning</h2>
+<p>Russian Markets Lab - reproducible MOEX market research stack for data ingestion, liquidity diagnostics, derivatives analytics, risk estimation, execution cost modeling and systematic research templates.</p>
+<h2>Dataset Metadata</h2>
+<table class="dataframe research-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>dataset</th>
+      <th>generated_at</th>
+      <th>row_count</th>
+      <th>source</th>
+      <th>is_demo</th>
+      <th>limitations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>market_universe</td>
+      <td>2026-06-18T05:16:03.717054+00:00</td>
+      <td>30</td>
+      <td>MOEX ISS public/delayed data</td>
+      <td>False</td>
+      <td>Universe is selected by current traded value from public TQBR marketdata.; If candles are unavailable, current-marketdata fallback is explicitly marked by low observations and tradable_flag=False.</td>
+    </tr>
+    <tr>
+      <td>liquidity_radar</td>
+      <td>2026-06-18T05:16:03.721923+00:00</td>
+      <td>30</td>
+      <td>Processed from MOEX ISS market universe and marketdata</td>
+      <td>False</td>
+      <td>Liquidity score is a first-pass diagnostic, not a perfect liquidity metric.; Public ISS data may omit full order book depth and broker-specific costs.</td>
+    </tr>
+    <tr>
+      <td>futures_basis</td>
+      <td>2026-06-18T05:16:04.798849+00:00</td>
+      <td>21</td>
+      <td>MOEX ISS public/delayed data</td>
+      <td>False</td>
+      <td>Basis is computed only where FORTS ASSETCODE maps to a TQBR spot ticker.; Futures prices are normalized by LOTVOLUME when available.</td>
+    </tr>
+    <tr>
+      <td>options_chain_features</td>
+      <td>2026-06-18T05:16:16.028477+00:00</td>
+      <td>200</td>
+      <td>MOEX ISS public/delayed data</td>
+      <td>False</td>
+      <td>Black-Scholes assumptions are simplified for Russian rates, dividends and liquidity.; Implied volatility is NaN where inputs are invalid or solver fails.</td>
+    </tr>
+    <tr>
+      <td>risk_snapshot</td>
+      <td>2026-06-18T05:16:16.055825+00:00</td>
+      <td>14</td>
+      <td>Processed from real MOEX candle returns where available</td>
+      <td>False</td>
+      <td>Risk snapshot uses historical daily returns for selected liquid tickers.; Stress scenarios are simplified diagnostics and not forecasts.</td>
+    </tr>
+    <tr>
+      <td>execution_comparison</td>
+      <td>2026-06-18T05:16:16.057634+00:00</td>
+      <td>4</td>
+      <td>Processed from liquidity snapshot assumptions</td>
+      <td>False</td>
+      <td>Execution model is a simplified diagnostic.; No order book depth, queue position, broker routing or real order placement is modeled.</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Methodology and Limitations</h2>
+<p>See <code>docs/methodology.md</code>, <code>docs/data_sources.md</code> and <code>docs/limitations.md</code>.</p>
+<h2>Disclaimer</h2>
+<p>Проект предназначен только для исследовательских и образовательных целей. Он не является инвестиционной рекомендацией, торговым сигналом, брокерским сервисом или системой отправки реальных заявок. / This project is for research and educational purposes only. It does not provide investment advice, trading signals, brokerage functionality, or real-money execution.</p>
+
+</body>
+</html>

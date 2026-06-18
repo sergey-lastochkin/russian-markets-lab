@@ -1,0 +1,45 @@
+{
+  "dataset_name": "market_universe",
+  "source": "MOEX ISS public/delayed data",
+  "generated_at": "2026-06-18T05:16:03.717054+00:00",
+  "row_count": 30,
+  "columns": [
+    "ticker",
+    "name",
+    "board",
+    "market",
+    "avg_volume",
+    "avg_value",
+    "avg_daily_value",
+    "median_value",
+    "median_daily_value",
+    "realized_volatility",
+    "num_observations",
+    "last_close",
+    "tradable_flag",
+    "missing_close_ratio",
+    "missing_value_ratio",
+    "liquidity_rank",
+    "volatility_rank",
+    "data_quality_score",
+    "tradability_score",
+    "adv_bucket",
+    "volatility_bucket",
+    "liquidity_bucket"
+  ],
+  "endpoints": [
+    "TQBR securities",
+    "TQBR marketdata",
+    "TQBR candles"
+  ],
+  "parameters": {
+    "tickers_limit": 30,
+    "lookback_days": 365
+  },
+  "limitations": [
+    "Universe is selected by current traded value from public TQBR marketdata.",
+    "If candles are unavailable, current-marketdata fallback is explicitly marked by low observations and tradable_flag=False."
+  ],
+  "is_demo": false,
+  "data_delay_note": "MOEX ISS public/delayed data. Availability and delay depend on the endpoint."
+}

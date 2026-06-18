@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Отчёт по ликвидности MOEX</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 40px; color: #17202a; }
+    h1, h2 { color: #111827; }
+    .meta { color: #52606d; }
+    .research-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    .research-table th, .research-table td { border-bottom: 1px solid #e5e7eb; padding: 8px; text-align: right; }
+    .research-table th:first-child, .research-table td:first-child { text-align: left; }
+    .note { background: #f8fafc; border-left: 4px solid #64748b; padding: 12px 16px; }
+    .bars { margin: 12px 0 28px; }
+    .bar-row { align-items: center; display: grid; gap: 10px; grid-template-columns: 140px 1fr 110px; margin: 7px 0; }
+    .bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { background: #e5e7eb; border-radius: 4px; display: block; height: 12px; }
+    .bar-fill { background: #334155; border-radius: 4px; display: block; height: 12px; }
+    .bar-value { color: #475569; font-variant-numeric: tabular-nums; text-align: right; }
+  </style>
+</head>
+<body>
+
+<h1>Отчёт по ликвидности MOEX / MOEX Liquidity Report</h1>
+<p class="meta">Дата формирования / Generated: 2026-06-18</p>
+<h2>Методология / Methodology</h2>
+<p>Отчёт ранжирует инструменты по traded value, объёму, глубине наблюдений, volatility diagnostics и tradability score.</p>
+<h2>Метаданные датасета / Dataset Metadata</h2>
+<table class="dataframe research-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>dataset</th>
+      <th>generated_at</th>
+      <th>row_count</th>
+      <th>source</th>
+      <th>is_demo</th>
+      <th>limitations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>market_universe</td>
+      <td>2026-06-18T05:16:03.717054+00:00</td>
+      <td>30</td>
+      <td>MOEX ISS public/delayed data</td>
+      <td>False</td>
+      <td>Universe is selected by current traded value from public TQBR marketdata.; If candles are unavailable, current-marketdata fallback is explicitly marked by low observations and tradable_flag=False.</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Графики / Charts</h2>
+<h3>Top average traded value</h3>
+<div class="bars">
+<div class="bar-row"><span class="bar-label">SBER</span><span class="bar-track"><span class="bar-fill" style="width:100.0%"></span></span><span class="bar-value">6.264e+09</span></div>
+<div class="bar-row"><span class="bar-label">GAZP</span><span class="bar-track"><span class="bar-fill" style="width:96.1%"></span></span><span class="bar-value">6.017e+09</span></div>
+<div class="bar-row"><span class="bar-label">VTBR</span><span class="bar-track"><span class="bar-fill" style="width:85.6%"></span></span><span class="bar-value">5.364e+09</span></div>
+<div class="bar-row"><span class="bar-label">T</span><span class="bar-track"><span class="bar-fill" style="width:67.9%"></span></span><span class="bar-value">4.253e+09</span></div>
+<div class="bar-row"><span class="bar-label">LKOH</span><span class="bar-track"><span class="bar-fill" style="width:66.1%"></span></span><span class="bar-value">4.142e+09</span></div>
+<div class="bar-row"><span class="bar-label">NVTK</span><span class="bar-track"><span class="bar-fill" style="width:49.3%"></span></span><span class="bar-value">3.09e+09</span></div>
+<div class="bar-row"><span class="bar-label">ROSN</span><span class="bar-track"><span class="bar-fill" style="width:42.5%"></span></span><span class="bar-value">2.661e+09</span></div>
+<div class="bar-row"><span class="bar-label">GMKN</span><span class="bar-track"><span class="bar-fill" style="width:34.9%"></span></span><span class="bar-value">2.183e+09</span></div>
+<div class="bar-row"><span class="bar-label">YDEX</span><span class="bar-track"><span class="bar-fill" style="width:31.6%"></span></span><span class="bar-value">1.978e+09</span></div>
+<div class="bar-row"><span class="bar-label">PLZL</span><span class="bar-track"><span class="bar-fill" style="width:31.3%"></span></span><span class="bar-value">1.963e+09</span></div>
+</div>
+<h3>Tradability score</h3>
+<div class="bars">
+<div class="bar-row"><span class="bar-label">SBER</span><span class="bar-track"><span class="bar-fill" style="width:100.0%"></span></span><span class="bar-value">0.9058</span></div>
+<div class="bar-row"><span class="bar-label">GAZP</span><span class="bar-track"><span class="bar-fill" style="width:92.8%"></span></span><span class="bar-value">0.8408</span></div>
+<div class="bar-row"><span class="bar-label">LKOH</span><span class="bar-track"><span class="bar-fill" style="width:82.3%"></span></span><span class="bar-value">0.7458</span></div>
+<div class="bar-row"><span class="bar-label">ROSN</span><span class="bar-track"><span class="bar-fill" style="width:80.5%"></span></span><span class="bar-value">0.7292</span></div>
+<div class="bar-row"><span class="bar-label">VTBR</span><span class="bar-track"><span class="bar-fill" style="width:78.3%"></span></span><span class="bar-value">0.7092</span></div>
+<div class="bar-row"><span class="bar-label">T</span><span class="bar-track"><span class="bar-fill" style="width:76.4%"></span></span><span class="bar-value">0.6917</span></div>
+<div class="bar-row"><span class="bar-label">GMKN</span><span class="bar-track"><span class="bar-fill" style="width:69.6%"></span></span><span class="bar-value">0.6308</span></div>
+<div class="bar-row"><span class="bar-label">YDEX</span><span class="bar-track"><span class="bar-fill" style="width:66.5%"></span></span><span class="bar-value">0.6025</span></div>
+<div class="bar-row"><span class="bar-label">AFLT</span><span class="bar-track"><span class="bar-fill" style="width:66.0%"></span></span><span class="bar-value">0.5975</span></div>
+<div class="bar-row"><span class="bar-label">NVTK</span><span class="bar-track"><span class="bar-fill" style="width:63.0%"></span></span><span class="bar-value">0.5708</span></div>
+</div>
+<h2>Таблица ликвидности / Liquidity Table</h2>
+<table class="dataframe research-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>ticker</th>
+      <th>name</th>
+      <th>board</th>
+      <th>market</th>
+      <th>avg_volume</th>
+      <th>avg_value</th>
+      <th>avg_daily_value</th>
+      <th>median_value</th>
+      <th>median_daily_value</th>
+      <th>realized_volatility</th>
+      <th>num_observations</th>
+      <th>last_close</th>
+      <th>tradable_flag</th>
+      <th>missing_close_ratio</th>
+      <th>missing_value_ratio</th>
+      <th>liquidity_rank</th>
+      <th>volatility_rank</th>
+      <th>data_quality_score</th>
+      <th>tradability_score</th>
+      <th>adv_bucket</th>
+      <th>volatility_bucket</th>
+      <th>liquidity_bucket</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SBER</td>
+      <td>Сбербанк</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.037252e+07</td>
+      <td>6.263562e+09</td>
+      <td>6.263562e+09</td>
+      <td>6.010645e+09</td>
+      <td>6.010645e+09</td>
+      <td>0.145034</td>
+      <td>334</td>
+      <td>319.150</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.905833</td>
+      <td>very_high</td>
+      <td>low</td>
+      <td>very_high</td>
+    </tr>
+    <tr>
+      <td>GAZP</td>
+      <td>ГАЗПРОМ ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>4.751293e+07</td>
+      <td>6.016744e+09</td>
+      <td>6.016744e+09</td>
+      <td>5.112908e+09</td>
+      <td>5.112908e+09</td>
+      <td>0.227620</td>
+      <td>334</td>
+      <td>109.040</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>8.0</td>
+      <td>1.0</td>
+      <td>0.840833</td>
+      <td>very_high</td>
+      <td>low</td>
+      <td>very_high</td>
+    </tr>
+    <tr>
+      <td>LKOH</td>
+      <td>ЛУКОЙЛ</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>7.411488e+05</td>
+      <td>4.142330e+09</td>
+      <td>4.142330e+09</td>
+      <td>3.191570e+09</td>
+      <td>3.191570e+09</td>
+      <td>0.244602</td>
+      <td>334</td>
+      <td>4501.500</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>14.0</td>
+      <td>1.0</td>
+      <td>0.745833</td>
+      <td>very_high</td>
+      <td>medium</td>
+      <td>very_high</td>
+    </tr>
+    <tr>
+      <td>ROSN</td>
+      <td>Роснефть</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>5.982991e+06</td>
+      <td>2.660898e+09</td>
+      <td>2.660898e+09</td>
+      <td>1.467643e+09</td>
+      <td>1.467643e+09</td>
+      <td>0.234631</td>
+      <td>334</td>
+      <td>333.150</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>7.0</td>
+      <td>11.0</td>
+      <td>1.0</td>
+      <td>0.729167</td>
+      <td>very_high</td>
+      <td>medium</td>
+      <td>very_high</td>
+    </tr>
+    <tr>
+      <td>VTBR</td>
+      <td>ВТБ ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>6.664379e+07</td>
+      <td>5.363508e+09</td>
+      <td>5.363508e+09</td>
+      <td>3.844794e+09</td>
+      <td>3.844794e+09</td>
+      <td>0.322963</td>
+      <td>334</td>
+      <td>78.570</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>25.0</td>
+      <td>1.0</td>
+      <td>0.709167</td>
+      <td>very_high</td>
+      <td>very_high</td>
+      <td>very_high</td>
+    </tr>
+    <tr>
+      <td>T</td>
+      <td>Т-Техно ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.620404e+06</td>
+      <td>4.252591e+09</td>
+      <td>4.252591e+09</td>
+      <td>4.044189e+09</td>
+      <td>4.044189e+09</td>
+      <td>0.184642</td>
+      <td>326</td>
+      <td>295.840</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.691667</td>
+      <td>very_high</td>
+      <td>low</td>
+      <td>very_high</td>
+    </tr>
+    <tr>
+      <td>GMKN</td>
+      <td>ГМКНорНик</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>1.630015e+07</td>
+      <td>2.183101e+09</td>
+      <td>2.183101e+09</td>
+      <td>1.961578e+09</td>
+      <td>1.961578e+09</td>
+      <td>0.288298</td>
+      <td>334</td>
+      <td>137.680</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>8.0</td>
+      <td>23.0</td>
+      <td>1.0</td>
+      <td>0.630833</td>
+      <td>very_high</td>
+      <td>very_high</td>
+      <td>very_high</td>
+    </tr>
+    <tr>
+      <td>YDEX</td>
+      <td>ЯНДЕКС</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>4.651790e+05</td>
+      <td>1.978441e+09</td>
+      <td>1.978441e+09</td>
+      <td>1.938705e+09</td>
+      <td>1.938705e+09</td>
+      <td>0.208047</td>
+      <td>332</td>
+      <td>4030.500</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>9.0</td>
+      <td>7.0</td>
+      <td>1.0</td>
+      <td>0.602500</td>
+      <td>high</td>
+      <td>low</td>
+      <td>very_high</td>
+    </tr>
+    <tr>
+      <td>AFLT</td>
+      <td>Аэрофлот</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.104534e+07</td>
+      <td>1.187045e+09</td>
+      <td>1.187045e+09</td>
+      <td>9.621967e+08</td>
+      <td>9.621967e+08</td>
+      <td>0.271906</td>
+      <td>334</td>
+      <td>43.110</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>12.0</td>
+      <td>17.0</td>
+      <td>1.0</td>
+      <td>0.597500</td>
+      <td>high</td>
+      <td>high</td>
+      <td>high</td>
+    </tr>
+    <tr>
+      <td>NVTK</td>
+      <td>Новатэк ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.599366e+06</td>
+      <td>3.089597e+09</td>
+      <td>3.089597e+09</td>
+      <td>2.490820e+09</td>
+      <td>2.490820e+09</td>
+      <td>0.281336</td>
+      <td>332</td>
+      <td>1014.500</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>6.0</td>
+      <td>20.0</td>
+      <td>1.0</td>
+      <td>0.570833</td>
+      <td>very_high</td>
+      <td>high</td>
+      <td>high</td>
+    </tr>
+    <tr>
+      <td>SMLT</td>
+      <td>Самолет ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.180303e+06</td>
+      <td>1.736473e+09</td>
+      <td>1.736473e+09</td>
+      <td>1.183142e+09</td>
+      <td>1.183142e+09</td>
+      <td>0.397061</td>
+      <td>334</td>
+      <td>404.600</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>11.0</td>
+      <td>27.0</td>
+      <td>1.0</td>
+      <td>0.549167</td>
+      <td>high</td>
+      <td>very_high</td>
+      <td>high</td>
+    </tr>
+    <tr>
+      <td>PIKK</td>
+      <td>ПИК ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.307337e+06</td>
+      <td>1.186899e+09</td>
+      <td>1.186899e+09</td>
+      <td>6.999934e+08</td>
+      <td>6.999934e+08</td>
+      <td>0.338288</td>
+      <td>334</td>
+      <td>591.300</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>13.0</td>
+      <td>26.0</td>
+      <td>1.0</td>
+      <td>0.519167</td>
+      <td>high</td>
+      <td>very_high</td>
+      <td>high</td>
+    </tr>
+    <tr>
+      <td>PLZL</td>
+      <td>Полюс</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>8.754304e+05</td>
+      <td>1.963327e+09</td>
+      <td>1.963327e+09</td>
+      <td>1.671542e+09</td>
+      <td>1.671542e+09</td>
+      <td>0.261182</td>
+      <td>330</td>
+      <td>2032.000</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10.0</td>
+      <td>16.0</td>
+      <td>1.0</td>
+      <td>0.503333</td>
+      <td>high</td>
+      <td>high</td>
+      <td>high</td>
+    </tr>
+    <tr>
+      <td>MGNT</td>
+      <td>Магнит ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.548549e+05</td>
+      <td>7.937937e+08</td>
+      <td>7.937937e+08</td>
+      <td>6.362709e+08</td>
+      <td>6.362709e+08</td>
+      <td>0.232660</td>
+      <td>334</td>
+      <td>2119.000</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>20.0</td>
+      <td>10.0</td>
+      <td>1.0</td>
+      <td>0.497500</td>
+      <td>medium</td>
+      <td>medium</td>
+      <td>high</td>
+    </tr>
+    <tr>
+      <td>TATN</td>
+      <td>Татнфт 3ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>1.797984e+06</td>
+      <td>1.103981e+09</td>
+      <td>1.103981e+09</td>
+      <td>9.002018e+08</td>
+      <td>9.002018e+08</td>
+      <td>0.283677</td>
+      <td>334</td>
+      <td>536.200</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>16.0</td>
+      <td>21.0</td>
+      <td>1.0</td>
+      <td>0.497500</td>
+      <td>medium</td>
+      <td>high</td>
+      <td>high</td>
+    </tr>
+    <tr>
+      <td>AFKS</td>
+      <td>Система ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>6.813483e+07</td>
+      <td>9.214626e+08</td>
+      <td>9.214626e+08</td>
+      <td>7.351172e+08</td>
+      <td>7.351172e+08</td>
+      <td>0.274607</td>
+      <td>334</td>
+      <td>12.996</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>18.0</td>
+      <td>18.0</td>
+      <td>1.0</td>
+      <td>0.480833</td>
+      <td>medium</td>
+      <td>high</td>
+      <td>medium</td>
+    </tr>
+    <tr>
+      <td>SPBE</td>
+      <td>СПБ Биржа</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>4.840446e+06</td>
+      <td>1.152591e+09</td>
+      <td>1.152591e+09</td>
+      <td>6.609216e+08</td>
+      <td>6.609216e+08</td>
+      <td>0.442104</td>
+      <td>334</td>
+      <td>188.700</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>15.0</td>
+      <td>28.0</td>
+      <td>1.0</td>
+      <td>0.469167</td>
+      <td>high</td>
+      <td>very_high</td>
+      <td>medium</td>
+    </tr>
+    <tr>
+      <td>CHMF</td>
+      <td>СевСт-ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>7.194882e+05</td>
+      <td>6.641095e+08</td>
+      <td>6.641095e+08</td>
+      <td>6.369749e+08</td>
+      <td>6.369749e+08</td>
+      <td>0.230923</td>
+      <td>334</td>
+      <td>666.400</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>22.0</td>
+      <td>9.0</td>
+      <td>1.0</td>
+      <td>0.467500</td>
+      <td>medium</td>
+      <td>medium</td>
+      <td>medium</td>
+    </tr>
+    <tr>
+      <td>RUAL</td>
+      <td>РУСАЛ ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.662855e+07</td>
+      <td>9.795159e+08</td>
+      <td>9.795159e+08</td>
+      <td>6.518947e+08</td>
+      <td>6.518947e+08</td>
+      <td>0.303908</td>
+      <td>334</td>
+      <td>33.415</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>17.0</td>
+      <td>24.0</td>
+      <td>1.0</td>
+      <td>0.459167</td>
+      <td>medium</td>
+      <td>very_high</td>
+      <td>medium</td>
+    </tr>
+    <tr>
+      <td>VKCO</td>
+      <td>МКПАО "ВК"</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.858629e+06</td>
+      <td>8.414880e+08</td>
+      <td>8.414880e+08</td>
+      <td>6.103662e+08</td>
+      <td>6.103662e+08</td>
+      <td>0.285504</td>
+      <td>334</td>
+      <td>231.250</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>19.0</td>
+      <td>22.0</td>
+      <td>1.0</td>
+      <td>0.435833</td>
+      <td>medium</td>
+      <td>high</td>
+      <td>medium</td>
+    </tr>
+    <tr>
+      <td>SNGS</td>
+      <td>Сургнфгз</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.390147e+07</td>
+      <td>5.201812e+08</td>
+      <td>5.201812e+08</td>
+      <td>4.538889e+08</td>
+      <td>4.538889e+08</td>
+      <td>0.202297</td>
+      <td>334</td>
+      <td>18.060</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>25.0</td>
+      <td>6.0</td>
+      <td>1.0</td>
+      <td>0.432500</td>
+      <td>low</td>
+      <td>low</td>
+      <td>medium</td>
+    </tr>
+    <tr>
+      <td>NLMK</td>
+      <td>НЛМК ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>6.269411e+06</td>
+      <td>6.520164e+08</td>
+      <td>6.520164e+08</td>
+      <td>6.278731e+08</td>
+      <td>6.278731e+08</td>
+      <td>0.242359</td>
+      <td>334</td>
+      <td>71.440</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>23.0</td>
+      <td>13.0</td>
+      <td>1.0</td>
+      <td>0.422500</td>
+      <td>low</td>
+      <td>medium</td>
+      <td>medium</td>
+    </tr>
+    <tr>
+      <td>MAGN</td>
+      <td>ММК</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.725209e+07</td>
+      <td>7.763728e+08</td>
+      <td>7.763728e+08</td>
+      <td>6.901682e+08</td>
+      <td>6.901682e+08</td>
+      <td>0.277599</td>
+      <td>334</td>
+      <td>20.980</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>21.0</td>
+      <td>19.0</td>
+      <td>1.0</td>
+      <td>0.419167</td>
+      <td>medium</td>
+      <td>high</td>
+      <td>low</td>
+    </tr>
+    <tr>
+      <td>MTSS</td>
+      <td>МТС-ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>2.426527e+06</td>
+      <td>5.301557e+08</td>
+      <td>5.301557e+08</td>
+      <td>5.148115e+08</td>
+      <td>5.148115e+08</td>
+      <td>0.184225</td>
+      <td>333</td>
+      <td>227.200</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>24.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.381667</td>
+      <td>low</td>
+      <td>low</td>
+      <td>low</td>
+    </tr>
+    <tr>
+      <td>ALRS</td>
+      <td>АЛРОСА ао</td>
+      <td>TQBR</td>
+      <td>shares</td>
+      <td>1.360758e+07</td>
+      <td>4.916292e+08</td>
+      <td>4.916292e+08</td>
+      <td>4.108454e+08</td>
+      <td>4.108454e+08</td>
+      <td>0.241035</td>
+      <td>334</td>
+      <td>26.070</td>
+      <td>True</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>26.0</td>
+      <td>12.0</td>
+      <td>1.0</td>
+      <td>0.374167</td>
+      <td>low</td>
+      <td>medium</td>
+      <td>low</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Риск-комментарии / Risk Notes</h2>
+<p class="note">Ликвидность может резко ухудшаться в стрессовых режимах. Historical turnover и spread proxy - это диагностика, а не гарантия исполнения.</p>
+<h2>Ограничения / Limitations</h2>
+<p>Публичные задержанные данные могут не включать full depth, broker-specific fees и real-time order book dynamics.</p>
+<h2>Дисклеймер / Disclaimer</h2>
+<p>Проект предназначен только для исследовательских и образовательных целей. Он не является инвестиционной рекомендацией, торговым сигналом, брокерским сервисом или системой отправки реальных заявок. / This project is for research and educational purposes only. It does not provide investment advice, trading signals, brokerage functionality, or real-money execution.</p>
+
+</body>
+</html>

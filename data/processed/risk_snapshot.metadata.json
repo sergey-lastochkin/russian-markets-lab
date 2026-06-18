@@ -1,0 +1,21 @@
+{
+  "dataset_name": "risk_snapshot",
+  "source": "Processed from real MOEX candle returns where available",
+  "generated_at": "2026-06-18T05:16:16.055825+00:00",
+  "row_count": 14,
+  "columns": [
+    "section",
+    "metric",
+    "value"
+  ],
+  "endpoints": [
+    "TQBR candles endpoint per selected ticker"
+  ],
+  "parameters": {},
+  "limitations": [
+    "Risk snapshot uses historical daily returns for selected liquid tickers.",
+    "Stress scenarios are simplified diagnostics and not forecasts."
+  ],
+  "is_demo": false,
+  "data_delay_note": "MOEX ISS public/delayed data. Availability and delay depend on the endpoint."
+}
