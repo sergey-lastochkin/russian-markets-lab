@@ -53,7 +53,8 @@ def apply_terminal_theme() -> None:
       radial-gradient(circle at 18% 0%, rgba(72, 91, 135, 0.18), transparent 32%),
       radial-gradient(circle at 82% 18%, rgba(45, 64, 100, 0.13), transparent 30%),
       #080b10;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
   }
   [data-testid="stAppViewContainer"]::before {
@@ -98,6 +99,18 @@ def apply_terminal_theme() -> None:
     background: rgba(7, 10, 15, 0.88);
     backdrop-filter: blur(18px);
     border-right: 1px solid var(--rml-border);
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  [data-testid="stSidebar"] > div,
+  [data-testid="stSidebarContent"] {
+    max-height: 100vh;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
   [data-testid="collapsedControl"],
   [data-testid="stHeader"],
