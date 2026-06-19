@@ -209,3 +209,11 @@ make dashboard
 ## Disclaimer
 
 This project is for research and educational purposes only. It does not provide investment advice, trading signals, brokerage functionality, or real-money order execution.
+
+## Author and Copyright
+
+Created and maintained by Sergey Goncharov.
+
+© 2026 Sergey Goncharov. All rights reserved.
+
+This repository is published for portfolio and educational review purposes. No permission is granted to copy, modify, redistribute, sublicense, or use this code commercially without explicit written permission from the author.
