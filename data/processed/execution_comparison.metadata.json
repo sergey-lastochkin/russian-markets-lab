@@ -1,7 +1,7 @@
 {
   "dataset_name": "execution_comparison",
   "source": "Processed from liquidity snapshot assumptions",
-  "generated_at": "2026-06-18T05:16:16.057634+00:00",
+  "generated_at": "2026-06-19T10:47:07.025753+00:00",
   "row_count": 4,
   "columns": [
     "execution_style",

@@ -1,12 +1,20 @@
 {
   "dataset_name": "risk_snapshot",
   "source": "Processed from real MOEX candle returns where available",
-  "generated_at": "2026-06-18T05:16:16.055825+00:00",
-  "row_count": 14,
+  "generated_at": "2026-06-19T10:47:07.023331+00:00",
+  "row_count": 18,
   "columns": [
     "section",
     "metric",
-    "value"
+    "value",
+    "method",
+    "window",
+    "limitations",
+    "instrument",
+    "weight",
+    "annualized_volatility",
+    "risk_contribution_pct",
+    "risk_contribution_vol"
   ],
   "endpoints": [
     "TQBR candles endpoint per selected ticker"
@@ -14,6 +22,7 @@
   "parameters": {},
   "limitations": [
     "Risk snapshot uses historical daily returns for selected liquid tickers.",
+    "Risk contribution is a covariance-based approximation.",
     "Stress scenarios are simplified diagnostics and not forecasts."
   ],
   "is_demo": false,

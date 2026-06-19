@@ -1,8 +1,8 @@
 {
   "dataset_name": "futures_basis",
   "source": "MOEX ISS public/delayed data",
-  "generated_at": "2026-06-18T05:16:04.798849+00:00",
-  "row_count": 21,
+  "generated_at": "2026-06-19T10:46:55.868759+00:00",
+  "row_count": 2,
   "columns": [
     "underlying",
     "spot_secid",
@@ -17,6 +17,7 @@
     "volume",
     "open_interest",
     "liquidity_filter",
+    "confidence",
     "signal"
   ],
   "endpoints": [

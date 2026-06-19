@@ -133,6 +133,7 @@ Screenshots were generated from the current Streamlit dashboard with processed d
 - [Limitations](docs/limitations.md)
 - [Audit](docs/audit.md)
 - [Project Status](docs/project_status.md)
+- [Public Readiness Review](docs/public_readiness.md)
 
 ## Quickstart
 

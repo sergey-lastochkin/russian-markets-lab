@@ -118,16 +118,16 @@ def build_liquidity_report(
 <h1>Отчёт по ликвидности MOEX / MOEX Liquidity Report</h1>
 <p class="meta">Дата формирования / Generated: {date.today().isoformat()}</p>
 <h2>Методология / Methodology</h2>
-<p>Отчёт ранжирует инструменты по traded value, объёму, глубине наблюдений, volatility diagnostics и tradability score.</p>
+<p>Отчёт ранжирует инструменты по traded value, объёму, качеству данных, liquidity score components и liquidity regime.</p>
 <h2>Метаданные датасета / Dataset Metadata</h2>
-{_metadata_html(["market_universe"])}
+{_metadata_html(["market_universe", "liquidity_radar"])}
 <h2>Графики / Charts</h2>
 {_bar_chart_html(universe, "ticker", "avg_value", "Top average traded value")}
 {_bar_chart_html(universe, "ticker", "tradability_score", "Tradability score")}
 <h2>Таблица ликвидности / Liquidity Table</h2>
 {_table_html(universe)}
 <h2>Риск-комментарии / Risk Notes</h2>
-<p class="note">Ликвидность может резко ухудшаться в стрессовых режимах. Historical turnover и spread proxy - это диагностика, а не гарантия исполнения.</p>
+<p class="note">Ликвидность может резко ухудшаться в стрессовых режимах. Quoted spread используется только при наличии bid/ask; proxy или unavailable spread не являются реальной котировкой. Historical turnover и liquidity regimes - диагностика, а не гарантия исполнения.</p>
 <h2>Ограничения / Limitations</h2>
 <p>Публичные задержанные данные могут не включать full depth, broker-specific fees и real-time order book dynamics.</p>
 <h2>Дисклеймер / Disclaimer</h2>
@@ -148,7 +148,7 @@ def build_derivatives_risk_report(
 <h1>Отчёт по деривативам и риску / Derivatives Risk Report</h1>
 <p class="meta">Дата формирования / Generated: {date.today().isoformat()}</p>
 <h2>Методология / Methodology</h2>
-<p>Отчёт объединяет futures basis deviations, options volatility diagnostics и portfolio stress testing.</p>
+<p>Отчёт объединяет futures basis deviations with confidence labels, options volatility diagnostics, portfolio stress testing и approximate risk contribution.</p>
 <h2>Метаданные датасетов / Dataset Metadata</h2>
 {_metadata_html(["futures_basis", "options_chain_features", "risk_snapshot"])}
 <h2>Графики / Charts</h2>
@@ -161,7 +161,7 @@ def build_derivatives_risk_report(
 <h2>Срез портфельного риска / Portfolio Risk Snapshot</h2>
 {_table_html(risk)}
 <h2>Риск-комментарии / Risk Notes</h2>
-<p class="note">Basis и volatility screens - исследовательская диагностика. Это не arbitrage claim, не торговая рекомендация и не обещание доходности.</p>
+<p class="note">Basis и volatility screens - исследовательская диагностика. Confidence labels отражают качество входных данных и ликвидность, но не являются trading signal. Это не arbitrage claim, не торговая рекомендация и не обещание доходности.</p>
 <h2>Ограничения / Limitations</h2>
 <p>Model outputs зависят от public data coverage, stale quotes, assumptions about rates/dividends и упрощённых execution costs.</p>
 <h2>Дисклеймер / Disclaimer</h2>

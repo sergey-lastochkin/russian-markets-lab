@@ -1,8 +1,8 @@
 {
   "dataset_name": "liquidity_radar",
   "source": "Processed from MOEX ISS market universe and marketdata",
-  "generated_at": "2026-06-18T05:16:03.721923+00:00",
-  "row_count": 30,
+  "generated_at": "2026-06-19T10:46:54.641840+00:00",
+  "row_count": 32,
   "columns": [
     "ticker",
     "name",
@@ -26,10 +26,21 @@
     "adv_bucket",
     "volatility_bucket",
     "liquidity_bucket",
+    "bid",
+    "offer",
     "spread_bps",
     "num_trades",
+    "quoted_spread_bps",
+    "spread_source",
     "turnover",
-    "liquidity_score"
+    "avg_value_component",
+    "volume_component",
+    "trade_count_component",
+    "spread_component",
+    "volatility_penalty",
+    "data_quality_component",
+    "liquidity_score",
+    "liquidity_regime"
   ],
   "endpoints": [
     "TQBR marketdata",
@@ -38,6 +49,8 @@
   "parameters": {},
   "limitations": [
     "Liquidity score is a first-pass diagnostic, not a perfect liquidity metric.",
+    "Quoted spreads are used only when bid/offer fields are available; otherwise spread is reported as unavailable.",
+    "Liquidity regimes are relative to the current processed dataset.",
     "Public ISS data may omit full order book depth and broker-specific costs."
   ],
   "is_demo": false,

@@ -22,7 +22,7 @@
 <body>
 
 <h1>Russian Markets Lab - Project Overview</h1>
-<p class="meta">Дата формирования / Generated: 2026-06-18</p>
+<p class="meta">Дата формирования / Generated: 2026-06-19</p>
 <h2>Positioning</h2>
 <p>Russian Markets Lab - reproducible MOEX market research stack for data ingestion, liquidity diagnostics, derivatives analytics, risk estimation, execution cost modeling and systematic research templates.</p>
 <h2>Dataset Metadata</h2>
@@ -40,31 +40,31 @@
   <tbody>
     <tr>
       <td>market_universe</td>
-      <td>2026-06-18T05:16:03.717054+00:00</td>
-      <td>30</td>
+      <td>2026-06-19T10:46:54.629398+00:00</td>
+      <td>4</td>
       <td>MOEX ISS public/delayed data</td>
       <td>False</td>
       <td>Universe is selected by current traded value from public TQBR marketdata.; If candles are unavailable, current-marketdata fallback is explicitly marked by low observations and tradable_flag=False.</td>
     </tr>
     <tr>
       <td>liquidity_radar</td>
-      <td>2026-06-18T05:16:03.721923+00:00</td>
-      <td>30</td>
+      <td>2026-06-19T10:46:54.641840+00:00</td>
+      <td>32</td>
       <td>Processed from MOEX ISS market universe and marketdata</td>
       <td>False</td>
-      <td>Liquidity score is a first-pass diagnostic, not a perfect liquidity metric.; Public ISS data may omit full order book depth and broker-specific costs.</td>
+      <td>Liquidity score is a first-pass diagnostic, not a perfect liquidity metric.; Quoted spreads are used only when bid/offer fields are available; otherwise spread is reported as unavailable.</td>
     </tr>
     <tr>
       <td>futures_basis</td>
-      <td>2026-06-18T05:16:04.798849+00:00</td>
-      <td>21</td>
+      <td>2026-06-19T10:46:55.868759+00:00</td>
+      <td>2</td>
       <td>MOEX ISS public/delayed data</td>
       <td>False</td>
       <td>Basis is computed only where FORTS ASSETCODE maps to a TQBR spot ticker.; Futures prices are normalized by LOTVOLUME when available.</td>
     </tr>
     <tr>
       <td>options_chain_features</td>
-      <td>2026-06-18T05:16:16.028477+00:00</td>
+      <td>2026-06-19T10:47:07.000922+00:00</td>
       <td>200</td>
       <td>MOEX ISS public/delayed data</td>
       <td>False</td>
@@ -72,15 +72,15 @@
     </tr>
     <tr>
       <td>risk_snapshot</td>
-      <td>2026-06-18T05:16:16.055825+00:00</td>
-      <td>14</td>
+      <td>2026-06-19T10:47:07.023331+00:00</td>
+      <td>18</td>
       <td>Processed from real MOEX candle returns where available</td>
       <td>False</td>
-      <td>Risk snapshot uses historical daily returns for selected liquid tickers.; Stress scenarios are simplified diagnostics and not forecasts.</td>
+      <td>Risk snapshot uses historical daily returns for selected liquid tickers.; Risk contribution is a covariance-based approximation.</td>
     </tr>
     <tr>
       <td>execution_comparison</td>
-      <td>2026-06-18T05:16:16.057634+00:00</td>
+      <td>2026-06-19T10:47:07.025753+00:00</td>
       <td>4</td>
       <td>Processed from liquidity snapshot assumptions</td>
       <td>False</td>
