@@ -501,8 +501,15 @@ def format_table_value(column: str, value: object, lang: str = "ru") -> object:
 def safe_html(value: object) -> str:
     """Convert dashboard table values to escaped HTML text."""
 
-    if value is None or pd.isna(value):
+    if value is None:
         return ""
+    if isinstance(value, (list, tuple, set)):
+        return escape(", ".join(builtins.str(item) for item in value))
+    try:
+        if pd.isna(value):
+            return ""
+    except (TypeError, ValueError):
+        pass
     return escape(builtins.str(value))
 
 
@@ -737,19 +744,25 @@ def table(
     )
 
 
-def chart(fig) -> None:
+def chart(fig, show_modebar: bool = True) -> None:
     """Render Plotly chart with a clean dashboard config."""
 
     st.plotly_chart(
         fig,
         width="stretch",
         config={
-            "displayModeBar": True,
+            "displayModeBar": show_modebar,
             "displaylogo": False,
             "modeBarButtonsToRemove": ["lasso2d", "select2d"],
             "responsive": True,
         },
     )
+
+
+def mobile_toggle(label: str, key: str) -> bool:
+    """Render a mobile-safe disclosure control."""
+
+    return st.checkbox(label, value=False, key=key)
 
 
 def execution_assumptions_display(lang: str) -> pd.DataFrame:
@@ -850,12 +863,14 @@ def render_mobile_view(
         if lang == "ru"
         else ["Overview", "Liquidity", "Futures", "Risk", "Execution", "Data"]
     )
-    section = st.radio(
+    section = st.pills(
         ui(lang, "Sections", "Разделы"),
         labels,
-        horizontal=True,
+        default=labels[0],
         key="mobile_section",
     )
+    if section is None:
+        section = labels[0]
 
     if section in {"Обзор", "Overview"}:
         render_mobile_overview(lang)
@@ -922,8 +937,11 @@ def render_mobile_overview(lang: str = "ru") -> None:
     )
     fig = market_volatility_scatter(universe, lang)
     if fig is not None:
-        chart(fig)
-    with st.expander(ui(lang, "Open market table", "Открыть таблицу рынка")):
+        chart(fig, show_modebar=False)
+    if mobile_toggle(
+        ui(lang, "Show market table", "Показать таблицу рынка"),
+        "mobile_market_table",
+    ):
         table(
             universe.sort_values(score_column, ascending=False).head(12),
             [
@@ -984,7 +1002,7 @@ def render_mobile_liquidity(lang: str = "ru") -> None:
     )
     fig = liquidity_score_bar(liquidity, lang)
     if fig is not None:
-        chart(fig)
+        chart(fig, show_modebar=False)
     note(
         ui(
             lang,
@@ -992,7 +1010,10 @@ def render_mobile_liquidity(lang: str = "ru") -> None:
             "Спред показывается как котируемый/опубликованный, если доступен. Если нет, это явно отмечается как отсутствующее или прокси-поле.",
         )
     )
-    with st.expander(ui(lang, "Open liquidity table", "Открыть таблицу ликвидности")):
+    if mobile_toggle(
+        ui(lang, "Show liquidity table", "Показать таблицу ликвидности"),
+        "mobile_liquidity_table",
+    ):
         table(
             liquidity.sort_values("liquidity_score", ascending=False).head(15),
             [
@@ -1088,8 +1109,11 @@ def render_mobile_futures(lang: str = "ru") -> None:
     )
     fig = futures_basis_bar(basis, lang)
     if fig is not None:
-        chart(fig)
-    with st.expander(ui(lang, "Open basis table", "Открыть таблицу базиса")):
+        chart(fig, show_modebar=False)
+    if mobile_toggle(
+        ui(lang, "Show basis table", "Показать таблицу базиса"),
+        "mobile_basis_table",
+    ):
         table(
             basis.sort_values("annualized_basis", ascending=False),
             [
@@ -1175,11 +1199,12 @@ def render_mobile_risk(lang: str = "ru") -> None:
         if "section" in risk.columns
         else pd.DataFrame()
     )
-    with st.expander(
-        ui(lang, "Open risk summary", "Открыть сводку риска"), expanded=True
+    section_header(ui(lang, "Risk summary", "Сводка риска"))
+    table(metrics, ["metric", "value", "method"], 320, lang)
+    if mobile_toggle(
+        ui(lang, "Show stress scenarios", "Показать стресс-сценарии"),
+        "mobile_stress_table",
     ):
-        table(metrics, ["metric", "value", "method", "limitations"], 320, lang)
-    with st.expander(ui(lang, "Open stress scenarios", "Открыть стресс-сценарии")):
         if stress.empty:
             note(
                 ui(lang, "No stress rows are available.", "Стресс-сценарии недоступны.")
@@ -1231,8 +1256,11 @@ def render_mobile_execution(lang: str = "ru") -> None:
     )
     fig = execution_cost_bar(execution, lang)
     if fig is not None:
-        chart(fig)
-    with st.expander(ui(lang, "Open execution table", "Открыть таблицу исполнения")):
+        chart(fig, show_modebar=False)
+    if mobile_toggle(
+        ui(lang, "Show execution table", "Показать таблицу исполнения"),
+        "mobile_execution_table",
+    ):
         table(
             execution,
             [
@@ -1247,7 +1275,10 @@ def render_mobile_execution(lang: str = "ru") -> None:
             340,
             lang,
         )
-    with st.expander(ui(lang, "Open assumptions", "Открыть допущения")):
+    if mobile_toggle(
+        ui(lang, "Show assumptions", "Показать допущения"),
+        "mobile_execution_assumptions",
+    ):
         table(execution_assumptions_display(lang), height=260, lang=lang)
 
 
@@ -1262,7 +1293,19 @@ def render_mobile_data(statuses: pd.DataFrame, lang: str = "ru") -> None:
             "Обработанные датасеты, метаданные и команды для пересборки.",
         ),
     )
-    display = statuses.copy()
+    status_columns = [
+        "dataset_name",
+        "exists",
+        "parquet_readable",
+        "metadata_exists",
+        "row_count",
+        "generated_at",
+        "source",
+        "is_demo",
+    ]
+    display = statuses[
+        [col for col in status_columns if col in statuses.columns]
+    ].copy()
     if lang == "ru":
         display = display.rename(
             columns={
@@ -1290,8 +1333,8 @@ def render_market_tab(lang: str = "ru") -> None:
         ui(lang, "Market Map", "Карта рынка"),
         ui(
             lang,
-            "Universe construction, tradability and data quality.",
-            "Конструкция торговой вселенной, торгуемость и качество данных.",
+            "Selected instruments, tradability and data quality.",
+            "Отобранные инструменты, торгуемость и качество данных.",
         ),
     )
     if universe.empty:
