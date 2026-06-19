@@ -112,19 +112,15 @@ The repository keeps `data/raw/` empty by default except for `.gitkeep`, because
 
 ## Dashboard Screenshots
 
-Screenshots were generated from the current Streamlit dashboard with processed datasets loaded and demo mode disabled.
+Focused screenshots were generated from the current Streamlit dashboard with processed datasets loaded and demo mode disabled. Click any image to open the full PNG.
 
-![Dashboard overview](assets/dashboard_overview.png)
+[![Dashboard overview](assets/readme_dashboard_overview.png)](assets/readme_dashboard_overview.png)
 
-![Market map](assets/dashboard_market_map.png)
+[![Liquidity radar](assets/readme_liquidity_radar.png)](assets/readme_liquidity_radar.png)
 
-![Liquidity radar](assets/liquidity_radar.png)
+[![Futures basis](assets/readme_futures_basis.png)](assets/readme_futures_basis.png)
 
-![Futures basis](assets/futures_basis.png)
-
-![Risk engine](assets/risk_engine.png)
-
-![Options surface](assets/options_surface.png)
+[![Risk engine](assets/readme_risk_engine.png)](assets/readme_risk_engine.png)
 
 ## Documentation
 
