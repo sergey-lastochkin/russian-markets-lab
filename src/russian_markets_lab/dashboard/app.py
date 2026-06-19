@@ -103,11 +103,11 @@ def main() -> None:
     hero(
         "Russian Markets Lab",
         (
-            "Исследовательский терминал MOEX на публичных/задержанных ISS-данных: "
-            "ликвидность, деривативы, риск, исполнение, обработанные датасеты и методология."
+            "Рабочий дашборд для анализа данных MOEX. Он показывает ликвидность, "
+            "фьючерсный базис, риск и издержки исполнения на основе публичных ISS-данных."
             if lang == "ru"
-            else "MOEX research terminal built on public/delayed ISS data: liquidity, "
-            "derivatives, risk, execution, processed datasets and methodology."
+            else "A working dashboard for MOEX market data research. It covers liquidity, "
+            "futures basis, risk and execution costs using public ISS data."
         ),
         "ИССЛЕДОВАНИЕ MOEX" if lang == "ru" else "MOEX RESEARCH",
     )

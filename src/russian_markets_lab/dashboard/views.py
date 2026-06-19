@@ -897,7 +897,7 @@ def render_mobile_overview(lang: str = "ru") -> None:
             (
                 ui(lang, "Instruments", "Инструменты"),
                 len(universe),
-                ui(lang, "market universe", "рыночная вселенная"),
+                ui(lang, "selected instruments", "отобранные инструменты"),
             ),
             (
                 ui(lang, "Median turnover", "Медианный оборот"),
@@ -1308,7 +1308,7 @@ def render_market_tab(lang: str = "ru") -> None:
                 (
                     ui(lang, "Instruments", "Инструменты"),
                     len(universe),
-                    ui(lang, "processed universe", "обработанная вселенная"),
+                    ui(lang, "selected instruments", "отобранные инструменты"),
                 ),
                 (
                     ui(lang, "Median ADV", "Медианный оборот"),
