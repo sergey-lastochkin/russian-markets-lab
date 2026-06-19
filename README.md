@@ -174,11 +174,13 @@ python -m russian_markets_lab.cli dataset-status
 streamlit run src/russian_markets_lab/dashboard/app.py
 ```
 
-The dashboard defaults to English, includes an EN/RU selector, and has an explicit demo-mode checkbox. Demo mode is off by default.
+The dashboard defaults to Russian, includes an RU/EN selector, and has an explicit demo-mode checkbox. Demo mode is off by default.
 
 ## Live Demo
 
 Live demo: https://russian-markets-lab.streamlit.app/
+
+Mobile Russian outreach view: https://russian-markets-lab.streamlit.app/?view=mobile&lang=ru
 
 A Streamlit demo can be deployed from this repository using:
 

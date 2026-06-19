@@ -25,6 +25,7 @@ from russian_markets_lab.dashboard.views import (  # noqa: E402
     render_futures_tab,
     render_liquidity_tab,
     render_market_tab,
+    render_mobile_view,
     render_options_tab,
     render_risk_tab,
     render_sidebar,
@@ -34,6 +35,27 @@ from russian_markets_lab.dashboard.views import (  # noqa: E402
 )
 
 
+def _query_value(name: str, default: str) -> str:
+    """Read a single Streamlit query parameter value."""
+
+    value = st.query_params.get(name, default)
+    if isinstance(value, list):
+        return str(value[0] if value else default).lower()
+    return str(value).lower()
+
+
+def _initial_language() -> str:
+    """Return initial language from query params, defaulting to Russian."""
+
+    return "en" if _query_value("lang", "ru") == "en" else "ru"
+
+
+def _initial_view() -> str:
+    """Return requested dashboard view mode."""
+
+    return "mobile" if _query_value("view", "desktop") == "mobile" else "desktop"
+
+
 def main() -> None:
     """Render Streamlit dashboard."""
 
@@ -41,18 +63,31 @@ def main() -> None:
     apply_terminal_theme()
 
     statuses = all_dataset_statuses(DATASETS)
-    language = st.sidebar.radio(
-        "Language / Язык", ["EN", "RU"], index=0, horizontal=True
+    requested_lang = _initial_language()
+    view_mode = _initial_view()
+    control_container = st if view_mode == "mobile" else st.sidebar
+    language = control_container.radio(
+        "Language / Язык",
+        ["RU", "EN"],
+        index=0 if requested_lang == "ru" else 1,
+        horizontal=True,
+        key=f"{view_mode}_language",
     )
     lang = "ru" if language == "RU" else "en"
-    demo_mode = st.sidebar.checkbox(
+    demo_mode = control_container.checkbox(
         (
             "Использовать демо-данные, если обработанные данные отсутствуют"
             if lang == "ru"
             else "Use demo data when processed data is missing"
         ),
         value=False,
+        key=f"{view_mode}_demo_mode",
     )
+
+    if view_mode == "mobile":
+        render_mobile_view(statuses, demo_mode, lang)
+        return
+
     render_sidebar(demo_mode, statuses, lang)
 
     hero(

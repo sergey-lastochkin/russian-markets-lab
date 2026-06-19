@@ -20,6 +20,7 @@ from russian_markets_lab.dashboard.charts import (
     turnover_bar,
 )
 from russian_markets_lab.dashboard.components import (
+    hero,
     metric_cards,
     note,
     section_header,
@@ -777,6 +778,507 @@ def execution_assumptions_display(lang: str) -> pd.DataFrame:
         ],
         columns=["assumption", "description"],
     )
+
+
+def render_mobile_view(
+    statuses: pd.DataFrame, demo_mode: bool, lang: str = "ru"
+) -> None:
+    """Render a compact phone-friendly dashboard view for outreach links."""
+
+    hero(
+        "Russian Markets Lab",
+        ui(
+            lang,
+            "Mobile overview of MOEX liquidity, futures basis, risk and execution diagnostics.",
+            "Короткий мобильный обзор: ликвидность MOEX, фьючерсный базис, риск и издержки исполнения.",
+        ),
+        ui(lang, "MOBILE RESEARCH VIEW", "МОБИЛЬНЫЙ ОБЗОР"),
+    )
+    note(
+        ui(
+            lang,
+            "This is a research dashboard built on public/delayed MOEX ISS data and processed datasets. "
+            "It does not provide trading signals or investment advice.",
+            "Это исследовательский дашборд на публичных/задержанных данных MOEX ISS и обработанных датасетах. "
+            "Он не даёт торговых сигналов и инвестиционных рекомендаций.",
+        )
+    )
+    if demo_mode:
+        show_demo_warning(lang)
+
+    available = int(statuses["exists"].sum()) if "exists" in statuses.columns else 0
+    total_rows = (
+        int(statuses["row_count"].sum()) if "row_count" in statuses.columns else 0
+    )
+    readable = bool(statuses.get("parquet_readable", pd.Series(dtype=bool)).all())
+    metric_cards(
+        [
+            (
+                ui(lang, "Datasets", "Датасеты"),
+                f"{available}/{len(DATASETS)}",
+                ui(lang, "processed files", "обработанные файлы"),
+            ),
+            (
+                ui(lang, "Rows", "Строки"),
+                f"{total_rows:,}",
+                ui(lang, "metadata-backed", "по метаданным"),
+            ),
+            (
+                ui(lang, "Updated", "Обновлено"),
+                latest_generated_at(statuses, lang),
+                None,
+            ),
+            (
+                ui(lang, "Data mode", "Режим данных"),
+                ui(lang, "Demo", "Демо") if demo_mode else ui(lang, "Real", "Реальные"),
+                ui(lang, "manual demo opt-in", "демо только вручную"),
+            ),
+            (
+                ui(lang, "Files", "Файлы"),
+                (
+                    ui(lang, "ready", "готово")
+                    if readable
+                    else ui(lang, "check", "проверить")
+                ),
+                ui(lang, "parquet", "parquet"),
+            ),
+        ]
+    )
+
+    labels = (
+        ["Обзор", "Ликвидность", "Фьючерсы", "Риск", "Исполнение", "Данные"]
+        if lang == "ru"
+        else ["Overview", "Liquidity", "Futures", "Risk", "Execution", "Data"]
+    )
+    section = st.radio(
+        ui(lang, "Sections", "Разделы"),
+        labels,
+        horizontal=True,
+        key="mobile_section",
+    )
+
+    if section in {"Обзор", "Overview"}:
+        render_mobile_overview(lang)
+    elif section in {"Ликвидность", "Liquidity"}:
+        render_mobile_liquidity(lang)
+    elif section in {"Фьючерсы", "Futures"}:
+        render_mobile_futures(lang)
+    elif section in {"Риск", "Risk"}:
+        render_mobile_risk(lang)
+    elif section in {"Исполнение", "Execution"}:
+        render_mobile_execution(lang)
+    else:
+        render_mobile_data(statuses, lang)
+
+
+def render_mobile_overview(lang: str = "ru") -> None:
+    """Render compact mobile market overview."""
+
+    universe = load_processed_dataset("market_universe")
+    section_header(
+        ui(lang, "Overview", "Обзор"),
+        ui(
+            lang,
+            "What the current processed market snapshot contains.",
+            "Что есть в текущем обработанном рыночном срезе.",
+        ),
+    )
+    if universe.empty:
+        show_missing_data_message("market_universe", lang)
+        return
+
+    score_column = (
+        "liquidity_score"
+        if "liquidity_score" in universe.columns
+        else "tradability_score"
+    )
+    metric_cards(
+        [
+            (
+                ui(lang, "Instruments", "Инструменты"),
+                len(universe),
+                ui(lang, "market universe", "рыночная вселенная"),
+            ),
+            (
+                ui(lang, "Median turnover", "Медианный оборот"),
+                format_number(
+                    numeric_series(universe, "avg_daily_value").median(), 2, lang
+                ),
+                ui(lang, "daily", "за день"),
+            ),
+            (
+                ui(lang, "Median score", "Медианный скор"),
+                format_number(numeric_series(universe, score_column).median(), 2, lang),
+                ui(lang, "relative rank", "относительный ранг"),
+            ),
+            (
+                ui(lang, "Median vol", "Медианная вол."),
+                format_percent(
+                    numeric_series(universe, "realized_volatility").median(), 1
+                ),
+                ui(lang, "annualized", "годовая"),
+            ),
+        ]
+    )
+    fig = market_volatility_scatter(universe, lang)
+    if fig is not None:
+        chart(fig)
+    with st.expander(ui(lang, "Open market table", "Открыть таблицу рынка")):
+        table(
+            universe.sort_values(score_column, ascending=False).head(12),
+            [
+                "ticker",
+                "name",
+                "avg_daily_value",
+                "realized_volatility",
+                score_column,
+                "data_quality_score",
+            ],
+            360,
+            lang,
+        )
+
+
+def render_mobile_liquidity(lang: str = "ru") -> None:
+    """Render compact mobile liquidity view."""
+
+    liquidity = load_processed_dataset("liquidity_radar")
+    section_header(
+        ui(lang, "Liquidity", "Ликвидность"),
+        ui(
+            lang,
+            "Rank-based liquidity score, spread fields and regimes.",
+            "Ранговый скор ликвидности, поля спреда и режимы ликвидности.",
+        ),
+    )
+    if liquidity.empty:
+        show_missing_data_message("liquidity_radar", lang)
+        return
+
+    regimes = liquidity.get("liquidity_regime", pd.Series(dtype=object)).value_counts()
+    metric_cards(
+        [
+            (
+                ui(lang, "Rows", "Строки"),
+                len(liquidity),
+                ui(lang, "liquidity snapshot", "срез ликвидности"),
+            ),
+            (
+                ui(lang, "Median score", "Медианный скор"),
+                format_number(
+                    numeric_series(liquidity, "liquidity_score").median(), 2, lang
+                ),
+                ui(lang, "relative", "относительный"),
+            ),
+            (
+                ui(lang, "Liquid", "Ликвидные"),
+                int(regimes.get("liquid", 0)),
+                ui(lang, "regime count", "по режиму"),
+            ),
+            (
+                ui(lang, "Watch/illiquid", "Под наблюдением"),
+                int(regimes.get("watch", 0)) + int(regimes.get("illiquid", 0)),
+                ui(lang, "needs care", "требует внимания"),
+            ),
+        ]
+    )
+    fig = liquidity_score_bar(liquidity, lang)
+    if fig is not None:
+        chart(fig)
+    note(
+        ui(
+            lang,
+            "Spread is shown as quoted/reported when available. Otherwise it remains explicit as missing or proxy data.",
+            "Спред показывается как котируемый/опубликованный, если доступен. Если нет, это явно отмечается как отсутствующее или прокси-поле.",
+        )
+    )
+    with st.expander(ui(lang, "Open liquidity table", "Открыть таблицу ликвидности")):
+        table(
+            liquidity.sort_values("liquidity_score", ascending=False).head(15),
+            [
+                "ticker",
+                "avg_daily_value",
+                "spread_bps",
+                "spread_source",
+                "liquidity_score",
+                "liquidity_regime",
+            ],
+            380,
+            lang,
+        )
+
+
+def render_mobile_futures(lang: str = "ru") -> None:
+    """Render compact mobile futures basis view."""
+
+    basis = load_processed_dataset("futures_basis")
+    section_header(
+        ui(lang, "Futures Basis", "Фьючерсный базис"),
+        ui(
+            lang,
+            "Basis diagnostic with signal and confidence coverage.",
+            "Диагностика базиса с оценкой и уровнем надёжности.",
+        ),
+    )
+    if basis.empty:
+        show_missing_data_message("futures_basis", lang)
+        return
+
+    counts = (
+        basis.get("signal", pd.Series(dtype=object))
+        .fillna("unknown")
+        .astype(str)
+        .str.lower()
+        .value_counts()
+    )
+    confidence = (
+        basis.get("confidence", pd.Series(dtype=object))
+        .fillna("unknown")
+        .value_counts()
+    )
+    metric_cards(
+        [
+            (
+                ui(lang, "Rich", "Премия"),
+                int(counts.get("rich", 0)),
+                ui(lang, "count", "кол-во"),
+            ),
+            (
+                ui(lang, "Fair", "Нейтрально"),
+                int(counts.get("fair", 0)),
+                ui(lang, "count", "кол-во"),
+            ),
+            (
+                ui(lang, "Cheap", "Дисконт"),
+                int(counts.get("cheap", 0)),
+                ui(lang, "count", "кол-во"),
+            ),
+            (
+                ui(lang, "Unknown", "Нет данных"),
+                int(counts.get("unknown", 0)),
+                ui(lang, "count", "кол-во"),
+            ),
+            (
+                ui(lang, "High confidence", "Высокая надёжность"),
+                int(confidence.get("high", 0)),
+                ui(lang, "valid inputs", "валидные входы"),
+            ),
+        ]
+    )
+    present = [
+        signal
+        for signal in ["rich", "fair", "cheap", "unknown"]
+        if int(counts.get(signal, 0)) > 0
+    ]
+    if len(present) == 1:
+        only_signal = present[0]
+        note(
+            ui(
+                lang,
+                f"Only {only_signal} contracts are present in the current processed snapshot.",
+                f"В текущем обработанном срезе есть только контракты класса {format_table_value('signal', only_signal, 'ru')}.",
+            )
+        )
+    st.warning(
+        ui(
+            lang,
+            "Basis screen is not an arbitrage signal.",
+            "Экран базиса не является арбитражным сигналом.",
+        )
+    )
+    fig = futures_basis_bar(basis, lang)
+    if fig is not None:
+        chart(fig)
+    with st.expander(ui(lang, "Open basis table", "Открыть таблицу базиса")):
+        table(
+            basis.sort_values("annualized_basis", ascending=False),
+            [
+                "underlying",
+                "futures_secid",
+                "days_to_expiry",
+                "annualized_basis",
+                "confidence",
+                "signal",
+            ],
+            380,
+            lang,
+        )
+
+
+def render_mobile_risk(lang: str = "ru") -> None:
+    """Render compact mobile risk view."""
+
+    risk = load_processed_dataset("risk_snapshot")
+    section_header(
+        ui(lang, "Risk", "Риск"),
+        ui(
+            lang,
+            "Historical risk metrics and simplified stress diagnostics.",
+            "Исторические метрики риска и упрощённые стресс-сценарии.",
+        ),
+    )
+    if risk.empty:
+        show_missing_data_message("risk_snapshot", lang)
+        return
+
+    metrics = (
+        risk[risk["section"].isin(["portfolio", "portfolio_metrics"])]
+        if "section" in risk
+        else risk
+    )
+    metric_lookup = (
+        metrics.set_index("metric")["value"].to_dict()
+        if {"metric", "value"}.issubset(metrics.columns)
+        else {}
+    )
+    metric_cards(
+        [
+            (
+                "VaR 95",
+                format_number(
+                    lookup_metric_value(metric_lookup, "VaR 95%", "var_95", "var 95"), 4
+                ),
+                ui(lang, "historical", "исторический"),
+            ),
+            (
+                "CVaR 95",
+                format_number(
+                    lookup_metric_value(
+                        metric_lookup, "CVaR 95%", "cvar_95", "cvar 95"
+                    ),
+                    4,
+                ),
+                ui(lang, "historical", "исторический"),
+            ),
+            (
+                ui(lang, "Volatility", "Волатильность"),
+                format_number(
+                    lookup_metric_value(
+                        metric_lookup, "annualized_volatility", "volatility"
+                    ),
+                    4,
+                ),
+                ui(lang, "annualized", "годовая"),
+            ),
+            (
+                ui(lang, "Max drawdown", "Макс. просадка"),
+                format_number(
+                    lookup_metric_value(metric_lookup, "max_drawdown", "max drawdown"),
+                    4,
+                ),
+                ui(lang, "historical", "историческая"),
+            ),
+        ]
+    )
+    stress = (
+        risk[risk["section"].astype(str).str.startswith("stress")]
+        if "section" in risk.columns
+        else pd.DataFrame()
+    )
+    with st.expander(
+        ui(lang, "Open risk summary", "Открыть сводку риска"), expanded=True
+    ):
+        table(metrics, ["metric", "value", "method", "limitations"], 320, lang)
+    with st.expander(ui(lang, "Open stress scenarios", "Открыть стресс-сценарии")):
+        if stress.empty:
+            note(
+                ui(lang, "No stress rows are available.", "Стресс-сценарии недоступны.")
+            )
+        else:
+            table(stress, ["metric", "value", "method", "limitations"], 320, lang)
+
+
+def render_mobile_execution(lang: str = "ru") -> None:
+    """Render compact mobile execution view."""
+
+    execution = load_processed_dataset("execution_comparison")
+    section_header(
+        ui(lang, "Execution", "Исполнение"),
+        ui(
+            lang,
+            "Spread, slippage and modelled execution cost.",
+            "Спред, проскальзывание и модельные издержки исполнения.",
+        ),
+    )
+    if execution.empty:
+        show_missing_data_message("execution_comparison", lang)
+        return
+
+    cost = numeric_series(execution, "total_cost_bps")
+    best_style = (
+        execution.sort_values("total_cost_bps").iloc[0]["execution_style"]
+        if "total_cost_bps" in execution.columns and not execution.empty
+        else "n/a"
+    )
+    metric_cards(
+        [
+            (
+                ui(lang, "Best style", "Минимальная стоимость"),
+                format_table_value("execution_style", best_style, lang),
+                ui(lang, "model output", "вывод модели"),
+            ),
+            (
+                ui(lang, "Median cost", "Медианная стоимость"),
+                format_number(cost.median(), 2, lang),
+                ui(lang, "bps", "б.п."),
+            ),
+            (
+                ui(lang, "Median fill", "Медианное исполнение"),
+                format_percent(numeric_series(execution, "fill_rate").median(), 1),
+                ui(lang, "assumption", "допущение"),
+            ),
+        ]
+    )
+    fig = execution_cost_bar(execution, lang)
+    if fig is not None:
+        chart(fig)
+    with st.expander(ui(lang, "Open execution table", "Открыть таблицу исполнения")):
+        table(
+            execution,
+            [
+                "execution_style",
+                "avg_slippage_bps",
+                "commission_bps",
+                "market_impact_bps",
+                "total_cost_bps",
+                "fill_rate",
+                "execution_risk",
+            ],
+            340,
+            lang,
+        )
+    with st.expander(ui(lang, "Open assumptions", "Открыть допущения")):
+        table(execution_assumptions_display(lang), height=260, lang=lang)
+
+
+def render_mobile_data(statuses: pd.DataFrame, lang: str = "ru") -> None:
+    """Render mobile dataset status view."""
+
+    section_header(
+        ui(lang, "Data", "Данные"),
+        ui(
+            lang,
+            "Processed datasets, metadata and local rebuild commands.",
+            "Обработанные датасеты, метаданные и команды для пересборки.",
+        ),
+    )
+    display = statuses.copy()
+    if lang == "ru":
+        display = display.rename(
+            columns={
+                "dataset_name": "Датасет",
+                "exists": "Есть",
+                "parquet_readable": "Parquet читается",
+                "metadata_exists": "Метаданные",
+                "row_count": "Строки",
+                "generated_at": "Обновлено",
+                "source": "Источник",
+                "is_demo": "Демо",
+            }
+        )
+    table(display, height=420, lang=lang)
+    st.code("python -m russian_markets_lab.cli build-all", language="bash")
+    st.code("python -m russian_markets_lab.cli dataset-status", language="bash")
 
 
 def render_market_tab(lang: str = "ru") -> None:
