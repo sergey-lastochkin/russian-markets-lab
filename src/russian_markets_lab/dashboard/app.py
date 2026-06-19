@@ -66,12 +66,22 @@ def main() -> None:
     requested_lang = _initial_language()
     view_mode = _initial_view()
     control_container = st if view_mode == "mobile" else st.sidebar
+    language_key = f"{view_mode}_language"
+    language_init_key = f"{view_mode}_language_initialized"
+    requested_language = "EN" if requested_lang == "en" else "RU"
+    if (
+        not st.session_state.get(language_init_key)
+        or "lang" in st.query_params
+        or language_key not in st.session_state
+    ):
+        st.session_state[language_key] = requested_language
+        st.session_state[language_init_key] = True
     language = control_container.radio(
         "Language / Язык",
         ["RU", "EN"],
         index=0 if requested_lang == "ru" else 1,
         horizontal=True,
-        key=f"{view_mode}_language",
+        key=language_key,
     )
     lang = "ru" if language == "RU" else "en"
     demo_mode = control_container.checkbox(
