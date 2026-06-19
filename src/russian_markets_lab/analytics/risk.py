@@ -81,21 +81,97 @@ def risk_summary_table(returns: pd.Series) -> pd.DataFrame:
     """Return a compact historical risk summary table."""
 
     clean = pd.to_numeric(returns, errors="coerce").dropna()
+    columns = ["metric", "value", "method", "window", "limitations"]
     if clean.empty:
-        return pd.DataFrame(columns=["metric", "value"])
+        return pd.DataFrame(columns=columns)
     equity = (1 + clean).cumprod()
     return pd.DataFrame(
         [
-            {"metric": "mean_daily_return", "value": float(clean.mean())},
+            {
+                "metric": "mean_daily_return",
+                "value": float(clean.mean()),
+                "method": "historical arithmetic mean",
+                "window": f"{len(clean)} observations",
+                "limitations": "Backward-looking daily sample.",
+            },
             {
                 "metric": "annualized_volatility",
                 "value": float(clean.std(ddof=1) * np.sqrt(252)),
+                "method": "daily standard deviation annualized by sqrt(252)",
+                "window": f"{len(clean)} observations",
+                "limitations": "Assumes daily volatility scales with square-root time.",
             },
-            {"metric": "VaR 95%", "value": value_at_risk(clean)},
-            {"metric": "CVaR 95%", "value": conditional_value_at_risk(clean)},
-            {"metric": "max_drawdown", "value": max_drawdown(equity)},
-            {"metric": "observations", "value": float(len(clean))},
+            {
+                "metric": "VaR 95%",
+                "value": value_at_risk(clean),
+                "method": "historical 5th percentile loss",
+                "window": f"{len(clean)} observations",
+                "limitations": "Does not model shocks absent from the sample.",
+            },
+            {
+                "metric": "CVaR 95%",
+                "value": conditional_value_at_risk(clean),
+                "method": "average loss beyond historical VaR cutoff",
+                "window": f"{len(clean)} observations",
+                "limitations": "Tail estimate can be unstable in short samples.",
+            },
+            {
+                "metric": "max_drawdown",
+                "value": max_drawdown(equity),
+                "method": "peak-to-trough drawdown on compounded returns",
+                "window": f"{len(clean)} observations",
+                "limitations": "Depends on the selected historical window.",
+            },
+            {
+                "metric": "observations",
+                "value": float(len(clean)),
+                "method": "valid daily return count",
+                "window": f"{len(clean)} observations",
+                "limitations": "Older observations may reflect stale regimes.",
+            },
         ]
+    )
+
+
+def risk_contribution_approximation(
+    returns: pd.DataFrame,
+    weights: dict[str, float],
+    periods_per_year: int = 252,
+) -> pd.DataFrame:
+    """Approximate asset risk contribution using the covariance matrix."""
+
+    clean = returns.apply(pd.to_numeric, errors="coerce").dropna(how="all").fillna(0)
+    columns = [
+        "instrument",
+        "weight",
+        "annualized_volatility",
+        "risk_contribution_pct",
+        "risk_contribution_vol",
+    ]
+    if clean.empty:
+        return pd.DataFrame(columns=columns)
+    weight_series = pd.Series(weights, dtype=float).reindex(clean.columns).fillna(0)
+    covariance = clean.cov() * periods_per_year
+    weighted_covariance = covariance.dot(weight_series)
+    portfolio_variance = float(weight_series.dot(weighted_covariance))
+    if portfolio_variance <= 0 or not np.isfinite(portfolio_variance):
+        contribution_pct = pd.Series(np.nan, index=clean.columns)
+        contribution_vol = pd.Series(np.nan, index=clean.columns)
+    else:
+        portfolio_volatility = float(np.sqrt(portfolio_variance))
+        contribution_pct = weight_series * weighted_covariance / portfolio_variance
+        contribution_vol = contribution_pct * portfolio_volatility
+    return pd.DataFrame(
+        {
+            "instrument": clean.columns,
+            "weight": weight_series.to_numpy(),
+            "annualized_volatility": (clean.std(ddof=1) * np.sqrt(periods_per_year))
+            .reindex(clean.columns)
+            .to_numpy(),
+            "risk_contribution_pct": contribution_pct.reindex(clean.columns).to_numpy(),
+            "risk_contribution_vol": contribution_vol.reindex(clean.columns).to_numpy(),
+        },
+        columns=columns,
     )
 
 

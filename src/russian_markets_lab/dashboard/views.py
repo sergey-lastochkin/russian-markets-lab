@@ -69,13 +69,22 @@ COLUMN_LABELS_EN = {
     "ticker": "Ticker",
     "name": "Name",
     "board": "Board",
-    "avg_daily_value": "Оборот, RUB",
+    "avg_daily_value": "ADV, RUB",
     "median_daily_value": "Median value, RUB",
     "realized_volatility": "Realized vol",
     "tradable_flag": "Tradable",
     "tradability_score": "Tradability",
     "data_quality_score": "Data quality",
     "liquidity_score": "Liquidity score",
+    "liquidity_regime": "Liquidity regime",
+    "spread_source": "Spread source",
+    "avg_value_component": "Value component",
+    "volume_component": "Volume component",
+    "trade_count_component": "Trade component",
+    "spread_component": "Spread component",
+    "volatility_penalty": "Volatility penalty",
+    "data_quality_component": "Data quality component",
+    "quoted_spread_bps": "Quoted spread, bps",
     "spread_bps": "Spread, bps",
     "num_trades": "Trades",
     "turnover": "Turnover",
@@ -92,6 +101,7 @@ COLUMN_LABELS_EN = {
     "open_interest": "Open interest",
     "liquidity_filter": "Liquidity filter",
     "signal": "Signal",
+    "confidence": "Confidence",
     "secid": "SECID",
     "shortname": "Short name",
     "option_type": "Type",
@@ -99,7 +109,7 @@ COLUMN_LABELS_EN = {
     "expiration": "Expiration",
     "market_price": "Market px",
     "spot": "Spot",
-    "moneyness": "Денежность",
+    "moneyness": "Moneyness",
     "time_to_expiry": "TTE, years",
     "implied_volatility": "IV",
     "delta": "Delta",
@@ -109,6 +119,14 @@ COLUMN_LABELS_EN = {
     "section": "Section",
     "metric": "Metric",
     "value": "Value",
+    "method": "Method",
+    "window": "Window",
+    "limitations": "Limitations",
+    "instrument": "Instrument",
+    "weight": "Weight",
+    "annualized_volatility": "Ann. volatility",
+    "risk_contribution_pct": "Risk contribution",
+    "risk_contribution_vol": "Risk contribution vol",
     "execution_style": "Style",
     "avg_slippage_bps": "Slippage, bps",
     "commission_bps": "Commission, bps",
@@ -134,6 +152,15 @@ COLUMN_LABELS_RU = {
     "tradability_score": "Скор",
     "data_quality_score": "Качество данных",
     "liquidity_score": "Скор ликвидности",
+    "liquidity_regime": "Режим ликвидности",
+    "spread_source": "Источник спреда",
+    "avg_value_component": "Компонент оборота",
+    "volume_component": "Компонент объёма",
+    "trade_count_component": "Компонент сделок",
+    "spread_component": "Компонент спреда",
+    "volatility_penalty": "Штраф волатильности",
+    "data_quality_component": "Компонент качества",
+    "quoted_spread_bps": "Котир. спред, б.п.",
     "spread_bps": "Спред, б.п.",
     "num_trades": "Сделки",
     "turnover": "Оборот",
@@ -150,6 +177,7 @@ COLUMN_LABELS_RU = {
     "open_interest": "Открытый интерес",
     "liquidity_filter": "Фильтр ликв.",
     "signal": "Оценка",
+    "confidence": "Надёжность",
     "secid": "Код",
     "shortname": "Короткое имя",
     "option_type": "Тип",
@@ -167,6 +195,14 @@ COLUMN_LABELS_RU = {
     "section": "Раздел",
     "metric": "Метрика",
     "value": "Значение",
+    "method": "Метод",
+    "window": "Окно",
+    "limitations": "Ограничения",
+    "instrument": "Инструмент",
+    "weight": "Вес",
+    "annualized_volatility": "Год. волатильность",
+    "risk_contribution_pct": "Вклад в риск",
+    "risk_contribution_vol": "Вклад в вол.",
     "execution_style": "Способ",
     "avg_slippage_bps": "Проскальз., б.п.",
     "commission_bps": "Комиссия, б.п.",
@@ -195,6 +231,8 @@ PERCENT_COLUMNS = {
     "annualized_basis",
     "implied_volatility",
     "fill_rate",
+    "annualized_volatility",
+    "risk_contribution_pct",
 }
 BPS_COLUMNS = {
     "spread_bps",
@@ -207,6 +245,12 @@ SCORE_COLUMNS = {
     "tradability_score",
     "data_quality_score",
     "liquidity_score",
+    "avg_value_component",
+    "volume_component",
+    "trade_count_component",
+    "spread_component",
+    "volatility_penalty",
+    "data_quality_component",
     "moneyness",
 }
 PRICE_COLUMNS = {
@@ -232,6 +276,9 @@ GREEK_COLUMNS = {
 CATEGORICAL_COLUMNS = {
     "option_type",
     "signal",
+    "confidence",
+    "liquidity_regime",
+    "spread_source",
     "execution_style",
     "execution_risk",
     "section",
@@ -336,6 +383,27 @@ def format_table_value(column: str, value: object, lang: str = "ru") -> object:
             "rich": "дорогой",
             "unknown": "нет оценки",
         }.get(normalized, value)
+    if lang == "ru" and column == "confidence":
+        return {
+            "high": "высокая",
+            "medium": "средняя",
+            "low": "низкая",
+            "unknown": "неизвестно",
+        }.get(normalized, value)
+    if lang == "ru" and column == "liquidity_regime":
+        return {
+            "liquid": "ликвидный",
+            "watch": "наблюдение",
+            "illiquid": "низкая ликвидность",
+            "insufficient_data": "недостаточно данных",
+        }.get(normalized, value)
+    if lang == "ru" and column == "spread_source":
+        return {
+            "quoted": "котируемый",
+            "reported": "из данных",
+            "quoted_or_reported": "котировка/данные",
+            "unavailable": "нет данных",
+        }.get(normalized, value)
     if lang == "ru" and column == "execution_risk":
         return {
             "low": "низкий",
@@ -359,6 +427,7 @@ def format_table_value(column: str, value: object, lang: str = "ru") -> object:
             "portfolio_metrics": "портфель",
             "correlation": "корреляция",
             "stress": "стресс",
+            "risk_contribution": "вклад в риск",
         }.get(normalized, value)
     if lang == "ru" and column == "metric":
         return {
@@ -377,6 +446,35 @@ def format_table_value(column: str, value: object, lang: str = "ru") -> object:
             "single-name gap down -25%": "гэп отдельной бумаги -25%",
             "volatility x2": "волатильность x2",
         }.get(normalized, value)
+    if lang == "ru" and column == "method":
+        return {
+            "historical arithmetic mean": "историческое среднее",
+            "daily standard deviation annualized by sqrt(252)": "дневное стандартное отклонение, годовое через sqrt(252)",
+            "historical 5th percentile loss": "исторический 5-й перцентиль убытка",
+            "average loss beyond historical var cutoff": "средний убыток хуже VaR",
+            "peak-to-trough drawdown on compounded returns": "просадка от пика до минимума на накопленной доходности",
+            "valid daily return count": "число валидных дневных доходностей",
+            "average off-diagonal correlation": "средняя внедиагональная корреляция",
+            "number of return columns": "число рядов доходности",
+            "simplified scenario shock": "упрощённый сценарный шок",
+        }.get(normalized, value)
+    if lang == "ru" and column == "limitations":
+        return {
+            "backward-looking daily sample.": "Историческая дневная выборка.",
+            "assumes daily volatility scales with square-root time.": "Предполагается масштабирование волатильности через корень времени.",
+            "does not model shocks absent from the sample.": "Не моделирует шоки, которых не было в выборке.",
+            "tail estimate can be unstable in short samples.": "Оценка хвоста нестабильна на коротких выборках.",
+            "depends on the selected historical window.": "Зависит от выбранного исторического окна.",
+            "older observations may reflect stale regimes.": "Старые наблюдения могут относиться к устаревшим режимам.",
+            "correlation is historical and unstable across regimes.": "Корреляция историческая и нестабильна между режимами.",
+            "asset set depends on available candles.": "Набор активов зависит от доступных свечей.",
+            "no margin, liquidation, funding or order book impact model.": "Нет модели маржи, ликвидации, фондирования и влияния стакана.",
+        }.get(normalized, value)
+    if lang == "ru" and column == "window":
+        if normalized == "current equal-weight portfolio":
+            return "текущий равновзвешенный портфель"
+        if normalized.endswith(" observations"):
+            return normalized.replace(" observations", " наблюдений")
     if isinstance(value, bool):
         if lang == "ru":
             return "Да" if value else "Нет"
@@ -808,9 +906,11 @@ def render_liquidity_tab(lang: str = "ru") -> None:
             "ticker",
             "avg_daily_value",
             "spread_bps",
+            "spread_source",
             "num_trades",
             "realized_volatility",
             "liquidity_score",
+            "liquidity_regime",
         ]
         left, right = st.columns(2)
         with left:
@@ -835,16 +935,39 @@ def render_liquidity_tab(lang: str = "ru") -> None:
         fig = turnover_bar(liquidity, lang)
         if fig is not None:
             chart(fig)
+        component_cols = [
+            "ticker",
+            "avg_value_component",
+            "volume_component",
+            "trade_count_component",
+            "spread_component",
+            "volatility_penalty",
+            "data_quality_component",
+            "liquidity_score",
+            "liquidity_regime",
+            "spread_source",
+        ]
+        section_header(
+            ui(lang, "Liquidity Score Components", "Компоненты скора ликвидности")
+        )
+        table(
+            liquidity.sort_values("liquidity_score", ascending=False).head(20),
+            component_cols,
+            360,
+            lang,
+        )
         section_header(ui(lang, "Score Methodology", "Методология скора"))
         note(
             ui(
                 lang,
                 "The liquidity score is a first-pass diagnostic combining ranked "
-                "value, volume/trade activity, spread proxy where available, and a "
-                "volatility penalty. It is not a perfect liquidity metric.",
+                "value, volume/trade activity, quoted or reported spread where available, "
+                "data quality, and a volatility penalty. Missing spread is shown explicitly "
+                "instead of being treated as a real quote.",
                 "Скор ликвидности — первичная диагностика: ранги оборота, объёма/"
-                "активности сделок, приближённая оценка спреда при наличии "
-                "и штраф за волатильность. Это не идеальная метрика ликвидности.",
+                "активности сделок, котируемый или опубликованный спред при наличии, "
+                "качество данных и штраф за волатильность. Отсутствующий спред "
+                "показывается явно и не выдаётся за реальную котировку.",
             )
         )
     show_dataset_metadata(metadata, lang)
@@ -880,6 +1003,11 @@ def render_futures_tab(lang: str = "ru") -> None:
             .fillna("unknown")
             .value_counts()
         )
+        confidence_counts = (
+            basis.get("confidence", pd.Series(dtype=object))
+            .fillna("unknown")
+            .value_counts()
+        )
         metric_cards(
             [
                 (
@@ -909,6 +1037,30 @@ def render_futures_tab(lang: str = "ru") -> None:
                 ),
             ]
         )
+        metric_cards(
+            [
+                (
+                    ui(lang, "High confidence", "Высокая надёжность"),
+                    int(confidence_counts.get("high", 0)),
+                    ui(lang, "valid prices and liquidity", "цены и ликвидность"),
+                ),
+                (
+                    ui(lang, "Medium confidence", "Средняя надёжность"),
+                    int(confidence_counts.get("medium", 0)),
+                    ui(lang, "partial liquidity fields", "частичная ликвидность"),
+                ),
+                (
+                    ui(lang, "Low confidence", "Низкая надёжность"),
+                    int(confidence_counts.get("low", 0)),
+                    ui(lang, "weak liquidity fields", "слабые поля ликвидности"),
+                ),
+                (
+                    ui(lang, "Unknown confidence", "Неизвестная надёжность"),
+                    int(confidence_counts.get("unknown", 0)),
+                    ui(lang, "missing inputs", "нет входных данных"),
+                ),
+            ]
+        )
         st.warning(
             ui(
                 lang,
@@ -934,6 +1086,7 @@ def render_futures_tab(lang: str = "ru") -> None:
                 "volume",
                 "open_interest",
                 "liquidity_filter",
+                "confidence",
                 "signal",
             ],
             420,
@@ -1100,9 +1253,21 @@ def render_risk_tab(lang: str = "ru") -> None:
             ]
         )
         stress = (
-            risk[risk["section"].astype(str).str.startswith("stress:")]
+            risk[risk["section"].astype(str).str.startswith("stress")]
             if "section" in risk.columns
             else pd.DataFrame()
+        )
+        contributions = (
+            risk[risk["section"].astype(str) == "risk_contribution"]
+            if "section" in risk.columns
+            else pd.DataFrame()
+        )
+        section_header(ui(lang, "Risk Summary", "Сводка риска"))
+        table(
+            metrics,
+            ["metric", "value", "method", "window", "limitations"],
+            320,
+            lang,
         )
         section_header(ui(lang, "Stress Scenarios", "Стресс-сценарии"))
         if stress.empty:
@@ -1114,9 +1279,34 @@ def render_risk_tab(lang: str = "ru") -> None:
                 )
             )
         else:
-            table(stress, ["section", "metric", "value"], 300, lang)
+            table(
+                stress,
+                ["metric", "value", "method", "window", "limitations"],
+                320,
+                lang,
+            )
+        if not contributions.empty:
+            section_header(
+                ui(
+                    lang,
+                    "Approximate Risk Contribution",
+                    "Приближённый вклад в риск",
+                )
+            )
+            table(
+                contributions,
+                [
+                    "instrument",
+                    "weight",
+                    "annualized_volatility",
+                    "risk_contribution_pct",
+                    "risk_contribution_vol",
+                ],
+                320,
+                lang,
+            )
         section_header(ui(lang, "Risk Snapshot", "Срез риска"))
-        table(risk, ["section", "metric", "value"], 340, lang)
+        table(risk, ["section", "metric", "value", "method", "limitations"], 340, lang)
         note(
             ui(
                 lang,

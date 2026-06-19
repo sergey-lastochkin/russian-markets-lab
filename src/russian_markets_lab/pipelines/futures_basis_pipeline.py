@@ -11,6 +11,7 @@ from russian_markets_lab.analytics.futures_basis import (
     annualized_basis,
     calculate_basis,
     calculate_basis_pct,
+    classify_basis_confidence,
     classify_basis_signal,
 )
 from russian_markets_lab.data.cache import cache_raw_table, load_latest_raw_table
@@ -32,6 +33,7 @@ FUTURES_BASIS_COLUMNS = [
     "volume",
     "open_interest",
     "liquidity_filter",
+    "confidence",
     "signal",
 ]
 
@@ -137,7 +139,14 @@ def build_futures_basis_table(
         annualized = annualized_basis(
             spot_price, futures_price, int(contract["days_to_expiry"])
         )
-        liquid = bool(contract["volume"] > 0 and contract["open_interest"] > 0)
+        confidence = classify_basis_confidence(
+            spot_price,
+            futures_price,
+            int(contract["days_to_expiry"]),
+            float(contract["volume"]),
+            float(contract["open_interest"]),
+        )
+        liquid = confidence in {"high", "medium"}
         rows.append(
             {
                 "underlying": underlying,
@@ -153,6 +162,7 @@ def build_futures_basis_table(
                 "volume": float(contract["volume"]),
                 "open_interest": float(contract["open_interest"]),
                 "liquidity_filter": liquid,
+                "confidence": confidence,
                 "signal": classify_basis_signal(annualized) if liquid else "unknown",
             }
         )

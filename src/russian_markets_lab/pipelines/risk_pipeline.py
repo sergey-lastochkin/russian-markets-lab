@@ -8,6 +8,7 @@ import pandas as pd
 from russian_markets_lab.analytics.risk import (
     correlation_matrix,
     portfolio_returns,
+    risk_contribution_approximation,
     risk_summary_table,
     stress_test_portfolio,
 )
@@ -37,6 +38,8 @@ def build_risk_snapshot(
         port_ret = portfolio_returns(returns, weights)
         summary = risk_summary_table(port_ret)
         summary.insert(0, "section", "portfolio")
+        contributions = risk_contribution_approximation(returns, weights)
+        contributions.insert(0, "section", "risk_contribution")
         corr = correlation_matrix(returns)
         corr_summary = pd.DataFrame(
             [
@@ -46,11 +49,17 @@ def build_risk_snapshot(
                     "value": float(
                         corr.where(~np.eye(len(corr), dtype=bool)).stack().mean()
                     ),
+                    "method": "average off-diagonal correlation",
+                    "window": f"{len(returns)} observations",
+                    "limitations": "Correlation is historical and unstable across regimes.",
                 },
                 {
                     "section": "correlation",
                     "metric": "asset_count",
                     "value": float(len(corr)),
+                    "method": "number of return columns",
+                    "window": f"{len(returns)} observations",
+                    "limitations": "Asset set depends on available candles.",
                 },
             ]
         )
@@ -68,7 +77,16 @@ def build_risk_snapshot(
             .rename(columns={"scenario": "metric", "portfolio_pnl_pct": "value"})
         )
         stress_summary.insert(0, "section", "stress")
-        risk = pd.concat([summary, corr_summary, stress_summary], ignore_index=True)
+        stress_summary["method"] = "simplified scenario shock"
+        stress_summary["window"] = "current equal-weight portfolio"
+        stress_summary["limitations"] = (
+            "No margin, liquidation, funding or order book impact model."
+        )
+        risk = pd.concat(
+            [summary, corr_summary, stress_summary, contributions],
+            ignore_index=True,
+            sort=False,
+        )
     write_processed_dataset(
         risk,
         "risk_snapshot",
@@ -76,6 +94,7 @@ def build_risk_snapshot(
         endpoints=["TQBR candles endpoint per selected ticker"],
         limitations=[
             "Risk snapshot uses historical daily returns for selected liquid tickers.",
+            "Risk contribution is a covariance-based approximation.",
             "Stress scenarios are simplified diagnostics and not forecasts.",
         ],
     )

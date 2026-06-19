@@ -60,6 +60,45 @@ def classify_basis_signal(
     return "fair"
 
 
+def classify_basis_confidence(
+    spot_price: float,
+    futures_price: float,
+    days_to_expiry: int | float,
+    volume: float | None = None,
+    open_interest: float | None = None,
+) -> str:
+    """Classify confidence for a basis diagnostic.
+
+    Confidence reflects data completeness and liquidity fields. It is not a
+    statement about tradeability or expected performance.
+    """
+
+    spot = pd.to_numeric(pd.Series([spot_price]), errors="coerce").iloc[0]
+    futures = pd.to_numeric(pd.Series([futures_price]), errors="coerce").iloc[0]
+    days = pd.to_numeric(pd.Series([days_to_expiry]), errors="coerce").iloc[0]
+    if (
+        not np.isfinite(spot)
+        or not np.isfinite(futures)
+        or not np.isfinite(days)
+        or spot <= 0
+        or futures <= 0
+        or days <= 0
+    ):
+        return "unknown"
+
+    volume_value = pd.to_numeric(pd.Series([volume]), errors="coerce").iloc[0]
+    open_interest_value = pd.to_numeric(
+        pd.Series([open_interest]), errors="coerce"
+    ).iloc[0]
+    has_volume = np.isfinite(volume_value) and volume_value > 0
+    has_open_interest = np.isfinite(open_interest_value) and open_interest_value > 0
+    if has_volume and has_open_interest:
+        return "high"
+    if has_volume or has_open_interest:
+        return "medium"
+    return "low"
+
+
 def build_futures_basis_table(
     spot_data: pd.DataFrame,
     futures_data: pd.DataFrame,
@@ -107,6 +146,13 @@ def build_futures_basis_table(
                 "open_interest", futures_row.iloc[0].get("openinterest", np.nan)
             )
         )
+        confidence = classify_basis_confidence(
+            spot_price,
+            futures_price,
+            days_to_expiry,
+            volume,
+            open_interest,
+        )
         rows.append(
             {
                 "underlying": map_row.get("underlying", spot_secid),
@@ -121,8 +167,13 @@ def build_futures_basis_table(
                 "annualized_basis": annualized,
                 "volume": volume,
                 "open_interest": open_interest,
-                "liquidity_filter": bool(volume > 0 and open_interest > 0),
-                "signal": classify_basis_signal(annualized),
+                "liquidity_filter": confidence in {"high", "medium"},
+                "confidence": confidence,
+                "signal": (
+                    classify_basis_signal(annualized)
+                    if confidence in {"high", "medium"}
+                    else "unknown"
+                ),
             }
         )
     return pd.DataFrame(rows)

@@ -21,6 +21,7 @@ def test_futures_basis_returns_empty_schema_if_mapping_fails() -> None:
     result = build_futures_basis_table(spot, fut_sec, fut_md)
     assert result.empty
     assert "annualized_basis" in result.columns
+    assert "confidence" in result.columns
 
 
 def test_options_pipeline_handles_invalid_contracts() -> None:

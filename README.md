@@ -101,10 +101,10 @@ The repository keeps `data/raw/` empty by default except for `.gitkeep`, because
 ## Modules
 
 1. **MOEX Market Universe Scanner**: instruments, marketdata, candles, tradability, and data quality.
-2. **Liquidity Radar**: liquidity scores, score components, turnover, spread proxy, and volume spikes.
-3. **Futures Basis Monitor**: basis, annualized basis, liquidity filter, and rich/fair/cheap classification.
+2. **Liquidity Radar**: liquidity scores, score components, turnover, spread handling, and volume spikes.
+3. **Futures Basis Monitor**: basis, annualized basis, liquidity/confidence labels, and rich/fair/cheap classification.
 4. **Options Volatility Surface**: chain features, moneyness, time to expiry, IV, Greeks, term profile, and surface proxy.
-5. **Portfolio Risk Engine**: historical risk metrics, drawdown, correlation, and stress scenarios.
+5. **Portfolio Risk Engine**: historical risk metrics, drawdown, correlation, approximate risk contribution, and stress scenarios.
 6. **Execution Simulator**: spread crossing, slippage, market impact, fill-rate assumptions, and cost comparison.
 7. **Strategy Research Lab**: simple research templates with cost sensitivity and failure analysis.
 8. **Streamlit Dashboard**: EN/RU selector, dataset status, metadata, charts, and explicit demo mode.
