@@ -717,7 +717,7 @@ def table(
     header = "".join(f"<th>{escape(str(column))}</th>" for column in display.columns)
     rows = []
     for values in display.astype(str).itertuples(index=False, name=None):
-        cells = "".join(f"<td>{escape(value)}</td>" for value in values)
+        cells = "".join(f"<td>{escape(str(value))}</td>" for value in values)
         rows.append(f"<tr>{cells}</tr>")
     st.markdown(
         f'<div class="rml-table-wrap" style="max-height:{height}px;">'
