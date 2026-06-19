@@ -261,7 +261,7 @@ def apply_terminal_theme() -> None:
     margin: 0.75rem 0 1rem;
   }
   .rml-card {
-    align-content: start;
+    align-content: center;
     animation: rmlFadeUp 0.22s ease-out both;
     background:
       linear-gradient(180deg, rgba(17, 25, 35, 0.94), rgba(10, 15, 23, 0.94));
@@ -269,9 +269,10 @@ def apply_terminal_theme() -> None:
     border: 1px solid rgba(63, 79, 103, 0.9);
     border-radius: 6px;
     display: grid;
-    grid-template-rows: auto auto 1fr;
-    min-height: 92px;
-    padding: 0.65rem 0.75rem;
+    gap: 0.18rem;
+    grid-template-rows: auto auto auto;
+    min-height: 104px;
+    padding: 0.8rem 0.8rem;
     transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
   }
   .rml-card:hover {
@@ -291,14 +292,14 @@ def apply_terminal_theme() -> None:
     font-size: 1.15rem;
     font-variant-numeric: tabular-nums;
     font-weight: 720;
-    line-height: 1.35;
+    line-height: 1.18;
     white-space: pre-line;
   }
   .rml-card-caption {
     color: var(--rml-muted);
     font-size: 0.72rem;
-    line-height: 1.3;
-    margin-top: 0.15rem;
+    line-height: 1.2;
+    margin-top: 0.12rem;
   }
   .rml-statusbar {
     display: grid;
