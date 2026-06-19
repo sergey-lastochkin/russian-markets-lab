@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 from html import escape
 
 import pandas as pd
@@ -496,6 +497,14 @@ def format_table_value(column: str, value: object, lang: str = "ru") -> object:
     return value
 
 
+def safe_html(value: object) -> str:
+    """Convert dashboard table values to escaped HTML text."""
+
+    if value is None or pd.isna(value):
+        return ""
+    return escape(builtins.str(value))
+
+
 def prepare_table_display(
     df: pd.DataFrame, columns: list[str] | None = None, lang: str = "ru"
 ) -> pd.DataFrame:
@@ -714,10 +723,10 @@ def table(
         note(ui(lang, "No rows to display.", "Нет строк для отображения."))
         return
 
-    header = "".join(f"<th>{escape(str(column))}</th>" for column in display.columns)
+    header = "".join(f"<th>{safe_html(column)}</th>" for column in display.columns)
     rows = []
-    for values in display.astype(str).itertuples(index=False, name=None):
-        cells = "".join(f"<td>{escape(str(value))}</td>" for value in values)
+    for values in display.itertuples(index=False, name=None):
+        cells = "".join(f"<td>{safe_html(value)}</td>" for value in values)
         rows.append(f"<tr>{cells}</tr>")
     st.markdown(
         f'<div class="rml-table-wrap" style="max-height:{height}px;">'
