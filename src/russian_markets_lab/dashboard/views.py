@@ -1001,8 +1001,15 @@ def render_futures_tab(lang: str = "ru") -> None:
         counts = (
             basis.get("signal", pd.Series(dtype=object))
             .fillna("unknown")
+            .astype(str)
+            .str.lower()
             .value_counts()
         )
+        present_signals = [
+            signal
+            for signal in ["rich", "fair", "cheap", "unknown"]
+            if int(counts.get(signal, 0)) > 0
+        ]
         confidence_counts = (
             basis.get("confidence", pd.Series(dtype=object))
             .fillna("unknown")
@@ -1016,8 +1023,8 @@ def render_futures_tab(lang: str = "ru") -> None:
                     ui(lang, "mapped futures", "сопоставленные фьючерсы"),
                 ),
                 (
-                    ui(lang, "Cheap", "Дешёвые"),
-                    int(counts.get("cheap", 0)),
+                    ui(lang, "Rich", "Дорогие"),
+                    int(counts.get("rich", 0)),
                     ui(lang, "screen count", "кол-во"),
                 ),
                 (
@@ -1026,8 +1033,8 @@ def render_futures_tab(lang: str = "ru") -> None:
                     ui(lang, "screen count", "кол-во"),
                 ),
                 (
-                    ui(lang, "Rich", "Дорогие"),
-                    int(counts.get("rich", 0)),
+                    ui(lang, "Cheap", "Дешёвые"),
+                    int(counts.get("cheap", 0)),
                     ui(lang, "screen count", "кол-во"),
                 ),
                 (
@@ -1037,6 +1044,15 @@ def render_futures_tab(lang: str = "ru") -> None:
                 ),
             ]
         )
+        if len(present_signals) == 1:
+            only_signal = present_signals[0]
+            note(
+                ui(
+                    lang,
+                    f"Only {only_signal} contracts are present in the current processed snapshot.",
+                    f"В текущем обработанном срезе есть только контракты класса {format_table_value('signal', only_signal, 'ru')}.",
+                )
+            )
         metric_cards(
             [
                 (
