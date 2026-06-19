@@ -176,6 +176,18 @@ streamlit run src/russian_markets_lab/dashboard/app.py
 
 The dashboard defaults to English, includes an EN/RU selector, and has an explicit demo-mode checkbox. Demo mode is off by default.
 
+## Live Demo
+
+Live demo: coming soon.
+
+A Streamlit demo can be deployed from this repository using:
+
+- Repository: `sergey-lastochkin/russian-markets-lab`
+- Branch: `main`
+- Main file path: `src/russian_markets_lab/dashboard/app.py`
+
+The dashboard uses committed processed datasets when available. Demo mode remains off by default.
+
 ## Run Checks
 
 ```bash
