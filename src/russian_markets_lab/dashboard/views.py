@@ -378,10 +378,10 @@ def format_table_value(column: str, value: object, lang: str = "ru") -> object:
         return {"call": "колл", "put": "пут"}.get(normalized, value)
     if lang == "ru" and column == "signal":
         return {
-            "cheap": "дешёвый",
-            "fair": "нейтральный",
-            "rich": "дорогой",
-            "unknown": "нет оценки",
+            "cheap": "Дисконт",
+            "fair": "Нейтрально",
+            "rich": "Премия",
+            "unknown": "Нет данных",
         }.get(normalized, value)
     if lang == "ru" and column == "confidence":
         return {
@@ -1023,24 +1023,28 @@ def render_futures_tab(lang: str = "ru") -> None:
                     ui(lang, "mapped futures", "сопоставленные фьючерсы"),
                 ),
                 (
-                    ui(lang, "Rich", "Дорогие"),
+                    ui(lang, "Rich", "Премия"),
                     int(counts.get("rich", 0)),
-                    ui(lang, "screen count", "кол-во"),
+                    ui(
+                        lang,
+                        "screen count",
+                        "фьючерс выше спота",
+                    ),
                 ),
                 (
-                    ui(lang, "Fair", "Нейтральные"),
+                    ui(lang, "Fair", "Нейтрально"),
                     int(counts.get("fair", 0)),
-                    ui(lang, "screen count", "кол-во"),
+                    ui(lang, "screen count", "близко к справедливому уровню"),
                 ),
                 (
-                    ui(lang, "Cheap", "Дешёвые"),
+                    ui(lang, "Cheap", "Дисконт"),
                     int(counts.get("cheap", 0)),
-                    ui(lang, "screen count", "кол-во"),
+                    ui(lang, "screen count", "фьючерс ниже спота"),
                 ),
                 (
-                    ui(lang, "Unknown", "Без оценки"),
+                    ui(lang, "Unknown", "Нет данных"),
                     int(counts.get("unknown", 0)),
-                    ui(lang, "missing classification", "нет классификации"),
+                    ui(lang, "missing classification", "недостаточно данных"),
                 ),
             ]
         )
