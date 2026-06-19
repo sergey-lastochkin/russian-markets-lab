@@ -13,6 +13,12 @@ Main endpoint groups:
 
 No private APIs, broker credentials or real-time paid feeds are used.
 
+## Data Source Design
+
+Russian Markets Lab currently uses MOEX ISS as the implemented data source. The processed datasets are stored as pandas/parquet tables, and most analytics functions operate on DataFrames rather than directly on MOEX API responses.
+
+This makes it possible to add CSV or other market data sources later, as long as they are converted into the expected processed schema. MOEX ISS is the first implemented adapter, not the final limit of the project. The reusable analytics layer is a design direction, not a completed full abstraction across every possible market data source.
+
 ## Raw Cache
 
 Raw tables are cached under:
@@ -51,4 +57,3 @@ Check dataset provenance:
 ```bash
 python -m russian_markets_lab.cli dataset-status
 ```
-
