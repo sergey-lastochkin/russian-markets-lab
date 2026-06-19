@@ -178,7 +178,7 @@ The dashboard defaults to English, includes an EN/RU selector, and has an explic
 
 ## Live Demo
 
-Live demo: coming soon.
+Live demo: https://russian-markets-lab.streamlit.app/
 
 A Streamlit demo can be deployed from this repository using:
 
