@@ -1,5 +1,6 @@
 import pandas as pd
 
+from russian_markets_lab.dashboard.components import format_metadata_source
 from russian_markets_lab.dashboard.views import prepare_table_display
 
 
@@ -47,3 +48,12 @@ def test_risk_table_values_remain_english_in_english_ui() -> None:
         "historical arithmetic mean",
         "333 observations",
     ]
+
+
+def test_risk_metadata_source_is_localized_in_russian() -> None:
+    source = "Processed from real MOEX candle returns where available"
+
+    assert format_metadata_source(source, "ru") == (
+        "Расчёт по фактической истории цен MOEX"
+    )
+    assert format_metadata_source(source, "en") == source

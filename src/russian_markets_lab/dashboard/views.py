@@ -666,6 +666,14 @@ def render_sidebar(demo_mode: bool, statuses: pd.DataFrame, lang: str = "ru") ->
                 "execution_comparison": "Исполнение",
             }
         )
+        status_display["Режим"] = status_display["Режим"].replace(
+            {
+                "cache": "кэш",
+                "stale": "устаревший кэш",
+                "demo": "демо",
+                "missing": "нет данных",
+            }
+        )
     st.sidebar.dataframe(
         status_display,
         width="stretch",

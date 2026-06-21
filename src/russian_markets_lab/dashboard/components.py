@@ -636,6 +636,25 @@ def note(text: str) -> None:
     st.markdown(f'<div class="rml-note">{escape(text)}</div>', unsafe_allow_html=True)
 
 
+def format_metadata_source(source: object, lang: str = "ru") -> str:
+    """Return a localized, human-readable dataset source label."""
+
+    text = str(source or ("н/д" if lang == "ru" else "n/a"))
+    if lang != "ru":
+        return text
+    return {
+        "MOEX ISS public/delayed data": "MOEX ISS, публичные или задержанные данные",
+        "Processed from liquidity snapshot assumptions": "Расчёт по данным о ликвидности",
+        "Processed from MOEX ISS market universe and marketdata": (
+            "Расчёт по инструментам и рыночным данным MOEX ISS"
+        ),
+        "Processed from real MOEX candle returns where available": (
+            "Расчёт по фактической истории цен MOEX"
+        ),
+        "Derived from processed market data": "Расчёт по обработанным рыночным данным",
+    }.get(text, text)
+
+
 def show_dataset_metadata(metadata: dict, lang: str = "ru") -> None:
     """Render dataset metadata in an expander."""
 
@@ -655,13 +674,7 @@ def show_dataset_metadata(metadata: dict, lang: str = "ru") -> None:
     rows_label = "Строки" if lang == "ru" else "Rows"
     generated_label = "Обновлено" if lang == "ru" else "Generated"
     demo_label = "Демо" if lang == "ru" else "Demo"
-    source = str(metadata.get("source", "н/д"))
-    if lang == "ru":
-        source = {
-            "MOEX ISS public/delayed data": "MOEX ISS, публичные/задержанные данные",
-            "Processed from liquidity snapshot assumptions": "Расчёт по срезу ликвидности",
-            "Derived from processed market data": "Расчёт по обработанным рыночным данным",
-        }.get(source, source)
+    source = format_metadata_source(metadata.get("source"), lang)
     demo_value = metadata.get("is_demo", False)
     demo_text = (
         ("Да" if bool(demo_value) else "Нет") if lang == "ru" else str(bool(demo_value))
