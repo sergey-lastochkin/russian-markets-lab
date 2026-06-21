@@ -198,13 +198,13 @@ COLUMN_LABELS_RU = {
     "metric": "Метрика",
     "value": "Значение",
     "method": "Метод",
-    "window": "Окно",
+    "window": "Выборка",
     "limitations": "Ограничения",
     "instrument": "Инструмент",
     "weight": "Вес",
     "annualized_volatility": "Год. волатильность",
     "risk_contribution_pct": "Вклад в риск",
-    "risk_contribution_vol": "Вклад в вол.",
+    "risk_contribution_vol": "Вклад в волатильность",
     "execution_style": "Способ",
     "avg_slippage_bps": "Проскальз., б.п.",
     "commission_bps": "Комиссия, б.п.",
@@ -235,6 +235,7 @@ PERCENT_COLUMNS = {
     "fill_rate",
     "annualized_volatility",
     "risk_contribution_pct",
+    "risk_contribution_vol",
 }
 BPS_COLUMNS = {
     "spread_bps",
@@ -285,6 +286,9 @@ CATEGORICAL_COLUMNS = {
     "execution_risk",
     "section",
     "metric",
+    "method",
+    "window",
+    "limitations",
 }
 
 
@@ -433,50 +437,50 @@ def format_table_value(column: str, value: object, lang: str = "ru") -> object:
         }.get(normalized, value)
     if lang == "ru" and column == "metric":
         return {
-            "mean_daily_return": "средняя дневная доходность",
-            "annualized_volatility": "годовая волатильность",
+            "mean_daily_return": "средняя доходность за день",
+            "annualized_volatility": "волатильность за год",
             "var 95%": "VaR 95%",
             "cvar 95%": "CVaR 95%",
-            "max_drawdown": "макс. просадка",
-            "observations": "наблюдения",
-            "avg_pairwise_correlation": "средняя парная корреляция",
-            "asset_count": "число активов",
+            "max_drawdown": "максимальная просадка",
+            "observations": "количество наблюдений",
+            "avg_pairwise_correlation": "средняя корреляция между бумагами",
+            "asset_count": "количество инструментов",
             "moex index -15%": "индекс MOEX -15%",
             "usd/rub +10%": "USD/RUB +10%",
             "interest rates +300 bps": "ставки +300 б.п.",
             "oil -20%": "нефть -20%",
-            "single-name gap down -25%": "гэп отдельной бумаги -25%",
-            "volatility x2": "волатильность x2",
+            "single-name gap down -25%": "падение одной бумаги на 25%",
+            "volatility x2": "рост волатильности в 2 раза",
         }.get(normalized, value)
     if lang == "ru" and column == "method":
         return {
-            "historical arithmetic mean": "историческое среднее",
-            "daily standard deviation annualized by sqrt(252)": "дневное стандартное отклонение, годовое через sqrt(252)",
-            "historical 5th percentile loss": "исторический 5-й перцентиль убытка",
-            "average loss beyond historical var cutoff": "средний убыток хуже VaR",
-            "peak-to-trough drawdown on compounded returns": "просадка от пика до минимума на накопленной доходности",
-            "valid daily return count": "число валидных дневных доходностей",
-            "average off-diagonal correlation": "средняя внедиагональная корреляция",
-            "number of return columns": "число рядов доходности",
-            "simplified scenario shock": "упрощённый сценарный шок",
+            "historical arithmetic mean": "среднее по дневной истории",
+            "daily standard deviation annualized by sqrt(252)": "дневная волатильность, приведённая к году",
+            "historical 5th percentile loss": "порог потерь по худшим 5% дней",
+            "average loss beyond historical var cutoff": "средняя потеря в дни хуже VaR",
+            "peak-to-trough drawdown on compounded returns": "падение накопленной доходности от максимума до минимума",
+            "valid daily return count": "дни с доступной доходностью",
+            "average off-diagonal correlation": "среднее по всем парам инструментов",
+            "number of return columns": "число инструментов с историей цен",
+            "simplified scenario shock": "заданный стресс-сценарий",
         }.get(normalized, value)
     if lang == "ru" and column == "limitations":
         return {
-            "backward-looking daily sample.": "Историческая дневная выборка.",
-            "assumes daily volatility scales with square-root time.": "Предполагается масштабирование волатильности через корень времени.",
-            "does not model shocks absent from the sample.": "Не моделирует шоки, которых не было в выборке.",
-            "tail estimate can be unstable in short samples.": "Оценка хвоста нестабильна на коротких выборках.",
-            "depends on the selected historical window.": "Зависит от выбранного исторического окна.",
-            "older observations may reflect stale regimes.": "Старые наблюдения могут относиться к устаревшим режимам.",
-            "correlation is historical and unstable across regimes.": "Корреляция историческая и нестабильна между режимами.",
-            "asset set depends on available candles.": "Набор активов зависит от доступных свечей.",
-            "no margin, liquidation, funding or order book impact model.": "Нет модели маржи, ликвидации, фондирования и влияния стакана.",
+            "backward-looking daily sample.": "Расчёт основан только на прошлых дневных данных.",
+            "assumes daily volatility scales with square-root time.": "Пересчёт на год использует стандартное допущение о корне из времени.",
+            "does not model shocks absent from the sample.": "Редкие события вне исторической выборки здесь не учитываются.",
+            "tail estimate can be unstable in short samples.": "На короткой истории оценка крупных потерь может заметно меняться.",
+            "depends on the selected historical window.": "Результат зависит от длины выбранной истории.",
+            "older observations may reflect stale regimes.": "Старые данные могут описывать уже изменившийся рынок.",
+            "correlation is historical and unstable across regimes.": "Связь между инструментами может измениться при другом состоянии рынка.",
+            "asset set depends on available candles.": "В расчёт вошли только инструменты с доступной историей цен.",
+            "no margin, liquidation, funding or order book impact model.": "Сценарий не учитывает маржу, принудительное закрытие позиций и ликвидность стакана.",
         }.get(normalized, value)
     if lang == "ru" and column == "window":
         if normalized == "current equal-weight portfolio":
-            return "текущий равновзвешенный портфель"
+            return "текущий портфель с равными весами"
         if normalized.endswith(" observations"):
-            return normalized.replace(" observations", " наблюдений")
+            return normalized.replace(" observations", " дн.")
     if isinstance(value, bool):
         if lang == "ru":
             return "Да" if value else "Нет"
