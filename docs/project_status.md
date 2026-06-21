@@ -232,3 +232,36 @@ Notebook sanity check:
 - Add notebook execution checks in CI.
 - Add a report build CLI command.
 - Add optional SQLite storage for larger local research datasets.
+
+## 11. Data Integrity Pass, 2026-06-21
+
+Focus:
+
+- confirm that demo, sample, mock or generated values are not silently shown as real market research;
+- make processed-cache provenance clearer in `dataset-status`, dashboard status tables and reports;
+- document the remaining data limitations in `docs/data_integrity_audit.md`.
+
+Changes:
+
+- Added `data_mode`, `stale` and `generated_age_days` to dataset status.
+- Dataset modes are now explicit: `cache`, `stale`, `demo` or `missing`.
+- Dashboard dataset status tables show the data mode and stale flag where relevant.
+- HTML report metadata tables include a data-mode column.
+- README now links to the data-integrity audit and describes raw snapshots as local public-ISS cache artifacts.
+
+Commands run during the pass:
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest -q
+.venv/bin/ruff check .
+.venv/bin/black --check .
+PYTHONPATH=src .venv/bin/python -m russian_markets_lab.cli dataset-status
+```
+
+Remaining limitations:
+
+- Processed snapshots can become stale if pipelines are not rerun.
+- Public MOEX ISS data can be delayed, sparse or temporarily unavailable.
+- Market-universe fallback from current marketdata is real MOEX data, but it remains a limited low-history fallback and is documented as such.
+- Demo mode remains available only as an explicit dashboard option and must not be presented as real market research output.

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -23,7 +24,43 @@ def test_dataset_status(tmp_path: Path) -> None:
     status = dataset_status("dataset", tmp_path)
     assert status["exists"] is True
     assert status["metadata_exists"] is True
+    assert status["data_mode"] == "cache"
+    assert status["stale"] is False
     assert status["row_count"] == 1
+
+
+def test_missing_dataset_status_is_missing_mode(tmp_path: Path) -> None:
+    status = dataset_status("missing", tmp_path)
+    assert status["exists"] is False
+    assert status["data_mode"] == "missing"
+    assert status["row_count"] == 0
+
+
+def test_demo_dataset_status_is_demo_mode(tmp_path: Path) -> None:
+    df = pd.DataFrame({"a": [1]})
+    df.to_parquet(tmp_path / "dataset.parquet", index=False)
+    metadata = build_metadata("dataset", df, "source", is_demo=True)
+    write_metadata(metadata, tmp_path / "dataset.metadata.json")
+    status = dataset_status("dataset", tmp_path)
+    assert status["is_demo"] is True
+    assert status["data_mode"] == "demo"
+
+
+def test_old_metadata_marks_dataset_stale(tmp_path: Path) -> None:
+    df = pd.DataFrame({"a": [1]})
+    df.to_parquet(tmp_path / "dataset.parquet", index=False)
+    metadata = build_metadata("dataset", df, "source")
+    metadata_path = tmp_path / "dataset.metadata.json"
+    write_metadata(metadata, metadata_path)
+    payload = json.loads(metadata_path.read_text(encoding="utf-8"))
+    payload["generated_at"] = "2020-01-01T00:00:00+00:00"
+    metadata_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    status = dataset_status("dataset", tmp_path)
+
+    assert status["stale"] is True
+    assert status["data_mode"] == "stale"
+    assert status["generated_age_days"] > 7
 
 
 def test_dataset_status_falls_back_to_metadata_when_parquet_unreadable(
@@ -47,6 +84,7 @@ def test_dataset_status_falls_back_to_metadata_when_parquet_unreadable(
     assert status["exists"] is True
     assert status["metadata_exists"] is True
     assert status["parquet_readable"] is False
+    assert status["data_mode"] == "cache"
     assert status["row_count"] == 2
     assert status["columns"] == ["a", "b"]
     assert "pyarrow" in status["parquet_error"]

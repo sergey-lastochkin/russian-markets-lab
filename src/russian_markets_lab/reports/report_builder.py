@@ -95,13 +95,15 @@ def _metadata_html(dataset_names: list[str]) -> str:
     rows = []
     for name in dataset_names:
         metadata = read_processed_metadata(name)
+        is_demo = bool(metadata.get("is_demo", False))
         rows.append(
             {
                 "dataset": name,
+                "data_mode": "demo" if is_demo else "processed_cache",
                 "generated_at": metadata.get("generated_at"),
                 "row_count": metadata.get("row_count"),
                 "source": metadata.get("source"),
-                "is_demo": metadata.get("is_demo"),
+                "is_demo": is_demo,
                 "limitations": "; ".join(metadata.get("limitations", [])[:2]),
             }
         )

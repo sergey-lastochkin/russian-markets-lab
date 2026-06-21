@@ -87,7 +87,7 @@ Processed datasets are stored as Parquet files with JSON metadata sidecars:
 - `data/processed/risk_snapshot.parquet`
 - `data/processed/execution_comparison.parquet`
 
-Each processed dataset has a matching `*.metadata.json` file with source, row count, columns, generation time, parameters, and limitations.
+Each processed dataset has a matching `*.metadata.json` file with source, row count, columns, generation time, parameters, limitations, and demo/provenance flags.
 
 Raw ISS snapshots are stored locally under:
 
@@ -96,7 +96,13 @@ data/raw/<dataset_name>/<timestamp>.parquet
 data/raw/<dataset_name>/<timestamp>.metadata.json
 ```
 
-The repository keeps `data/raw/` empty by default except for `.gitkeep`, because raw snapshots are generated locally when the pipeline runs.
+Raw snapshots are local cache artifacts generated when the pipeline runs. They are not manually invented research data and should be treated as cached public/delayed ISS tables, not guaranteed-fresh live feeds.
+
+Use the dataset status command to inspect processed-cache provenance:
+
+```bash
+python -m russian_markets_lab.cli dataset-status
+```
 
 ## Modules
 
@@ -128,6 +134,7 @@ Focused screenshots were generated from the current Streamlit dashboard with pro
 - [Data Sources](docs/data_sources.md)
 - [Limitations](docs/limitations.md)
 - [Audit](docs/audit.md)
+- [Data Integrity Audit](docs/data_integrity_audit.md)
 - [Project Status](docs/project_status.md)
 - [Public Readiness Review](docs/public_readiness.md)
 

@@ -569,8 +569,20 @@ def render_sidebar(demo_mode: bool, statuses: pd.DataFrame, lang: str = "ru") ->
         )
     )
 
-    mode = ui(lang, "Demo", "Демо") if demo_mode else ui(lang, "Real", "Реальные")
-    mode_status = "warn" if demo_mode else "good"
+    status_modes = set(statuses.get("data_mode", pd.Series(dtype=object)).dropna())
+    has_stale = bool(statuses.get("stale", pd.Series(dtype=bool)).any())
+    if demo_mode:
+        mode = ui(lang, "Demo", "Демо")
+        mode_status = "warn"
+    elif "missing" in status_modes:
+        mode = ui(lang, "Partial cache", "Частичный кэш")
+        mode_status = "warn"
+    elif has_stale:
+        mode = ui(lang, "Stale cache", "Устаревший кэш")
+        mode_status = "warn"
+    else:
+        mode = ui(lang, "Processed cache", "Обработанный кэш")
+        mode_status = "good"
     readable = bool(statuses.get("parquet_readable", pd.Series(dtype=bool)).all())
     status_rows(
         [
@@ -618,10 +630,12 @@ def render_sidebar(demo_mode: bool, statuses: pd.DataFrame, lang: str = "ru") ->
     terminal_title(ui(lang, "Dataset Status", "Статус данных"), st.sidebar)
     status_columns = [
         "dataset_name",
+        "data_mode",
         "exists",
         "parquet_readable",
         "metadata_exists",
         "row_count",
+        "stale",
     ]
     status_display = statuses[
         [col for col in status_columns if col in statuses.columns]
@@ -630,15 +644,17 @@ def render_sidebar(demo_mode: bool, statuses: pd.DataFrame, lang: str = "ru") ->
         status_display = status_display.rename(
             columns={
                 "dataset_name": "Датасет",
+                "data_mode": "Режим",
                 "exists": "Есть",
                 "parquet_readable": "Файл",
                 "metadata_exists": "Метаданные",
                 "row_count": "Строки",
+                "stale": "Старые",
             }
         )
         status_display["Датасет"] = status_display["Датасет"].replace(
             {
-                "market_universe": "Вселенная",
+                "market_universe": "Инструменты",
                 "liquidity_radar": "Ликвидность",
                 "futures_basis": "Базис",
                 "options_chain_features": "Опционы",
@@ -683,6 +699,20 @@ def render_top_status_bar(
         int(statuses["row_count"].sum()) if "row_count" in statuses.columns else 0
     )
     readable = bool(statuses.get("parquet_readable", pd.Series(dtype=bool)).all())
+    status_modes = set(statuses.get("data_mode", pd.Series(dtype=object)).dropna())
+    has_stale = bool(statuses.get("stale", pd.Series(dtype=bool)).any())
+    if demo_mode:
+        mode_value = ui(lang, "Demo", "Демо")
+        mode_help = ui(lang, "explicit opt-in demo", "демо только вручную")
+    elif "missing" in status_modes:
+        mode_value = ui(lang, "Partial cache", "Частичный кэш")
+        mode_help = ui(lang, "missing datasets visible", "пропуски видны")
+    elif has_stale:
+        mode_value = ui(lang, "Stale cache", "Устаревший кэш")
+        mode_help = ui(lang, "rebuild recommended", "лучше пересобрать")
+    else:
+        mode_value = ui(lang, "Processed cache", "Обработанный кэш")
+        mode_help = ui(lang, "MOEX ISS-derived files", "файлы из MOEX ISS")
     metric_cards(
         [
             (
@@ -697,8 +727,8 @@ def render_top_status_bar(
             ),
             (
                 ui(lang, "Data mode", "Режим данных"),
-                ui(lang, "Demo", "Демо") if demo_mode else ui(lang, "Real", "Реальные"),
-                ui(lang, "explicit opt-in demo", "демо только вручную"),
+                mode_value,
+                mode_help,
             ),
             (
                 ui(lang, "Latest generated_at", "Последнее обновление"),
@@ -1295,10 +1325,12 @@ def render_mobile_data(statuses: pd.DataFrame, lang: str = "ru") -> None:
     )
     status_columns = [
         "dataset_name",
+        "data_mode",
         "exists",
         "parquet_readable",
         "metadata_exists",
         "row_count",
+        "stale",
         "generated_at",
         "source",
         "is_demo",
@@ -1310,10 +1342,12 @@ def render_mobile_data(statuses: pd.DataFrame, lang: str = "ru") -> None:
         display = display.rename(
             columns={
                 "dataset_name": "Датасет",
+                "data_mode": "Режим",
                 "exists": "Есть",
                 "parquet_readable": "Parquet читается",
                 "metadata_exists": "Метаданные",
                 "row_count": "Строки",
+                "stale": "Устарел",
                 "generated_at": "Обновлено",
                 "source": "Источник",
                 "is_demo": "Демо",
@@ -2005,8 +2039,8 @@ def render_strategy_tab(demo_mode: bool, lang: str = "ru") -> None:
                     "Z-score, скользящее среднее и пороги входа/выхода",
                 ),
                 (
-                    "Парный арбитраж",
-                    "Спред пары и заготовка для проверки коинтеграции",
+                    "Парная модель",
+                    "Спред пары и шаблон проверки коинтеграции",
                 ),
                 ("Carry", "Экран базиса и carry на основе фьючерсной диагностики"),
                 ("Фильтр режима", "Режимы волатильности, тренда и ликвидности"),
@@ -2015,7 +2049,7 @@ def render_strategy_tab(demo_mode: bool, lang: str = "ru") -> None:
             else [
                 ("Momentum", "Rolling return, trend filter, volatility filter"),
                 ("Mean Reversion", "Rolling z-score, entry/exit thresholds"),
-                ("Stat Arb", "Pairs spread and cointegration placeholder"),
+                ("Pairs Template", "Pairs spread and cointegration research template"),
                 ("Carry", "Basis/carry screen from futures basis diagnostics"),
                 ("Regime Filter", "Volatility, trend and liquidity regimes"),
             ]

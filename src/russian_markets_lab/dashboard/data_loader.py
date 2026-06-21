@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -12,6 +13,8 @@ from russian_markets_lab.data.io import (
 )
 from russian_markets_lab.data.metadata import read_metadata
 from russian_markets_lab.paths import PROCESSED_DATA_DIR
+
+STALE_AFTER_DAYS = 7
 
 
 def load_processed_dataset(
@@ -39,6 +42,27 @@ def load_metadata(name: str, processed_dir: Path | None = None) -> dict:
     return read_metadata(processed_metadata_path(name, processed_dir))
 
 
+def _metadata_age_days(metadata: dict) -> float | None:
+    generated_at = metadata.get("generated_at")
+    if not generated_at:
+        return None
+    timestamp = pd.to_datetime(generated_at, errors="coerce", utc=True)
+    if pd.isna(timestamp):
+        return None
+    age = datetime.now(UTC) - timestamp.to_pydatetime()
+    return max(age.total_seconds() / 86_400, 0.0)
+
+
+def _data_mode(exists: bool, metadata: dict, stale: bool) -> str:
+    if not exists:
+        return "missing"
+    if bool(metadata.get("is_demo", False)):
+        return "demo"
+    if stale:
+        return "stale"
+    return "cache"
+
+
 def dataset_status(name: str, processed_dir: Path | None = None) -> dict:
     """Return processed dataset status for dashboards and CLI summaries."""
 
@@ -62,10 +86,18 @@ def dataset_status(name: str, processed_dir: Path | None = None) -> dict:
     else:
         row_count = 0
         columns = []
+    generated_age_days = _metadata_age_days(metadata)
+    stale = bool(
+        generated_age_days is not None and generated_age_days > STALE_AFTER_DAYS
+    )
+    data_mode = _data_mode(exists, metadata, stale)
     return {
         "dataset_name": name.removesuffix(".parquet"),
         "exists": exists,
         "parquet_readable": parquet_readable,
+        "data_mode": data_mode,
+        "stale": stale,
+        "generated_age_days": generated_age_days,
         "row_count": row_count,
         "columns": columns,
         "metadata_exists": metadata_path.exists(),
