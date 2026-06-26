@@ -1,25 +1,81 @@
 # Russian Markets Lab
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
-![pytest](https://img.shields.io/badge/tests-pytest-green)
-![Streamlit](https://img.shields.io/badge/dashboard-Streamlit-red)
-![MOEX ISS](https://img.shields.io/badge/data-MOEX%20ISS-lightgrey)
+Public research dashboard for MOEX market data, liquidity, futures basis, portfolio views and generated reports.
 
-Research platform for MOEX liquidity, derivatives, risk, and execution analysis.
+Market-data and reporting infrastructure demo for Russian markets. Built with Python and Streamlit.
 
-Russian Markets Lab is a Python project for working with public/delayed MOEX ISS market data. It is not an order-sending app, not a signal service, and not a source of return claims. The goal is to keep the research workflow reproducible and easy to inspect.
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](pyproject.toml)
+[![Streamlit](https://img.shields.io/badge/dashboard-Streamlit-ff4b4b)](https://russian-markets-lab.streamlit.app/)
+[![pytest](https://img.shields.io/badge/tests-pytest-green)](tests)
+[![Ruff](https://img.shields.io/badge/lint-Ruff-4B8BBE)](pyproject.toml)
+[![Black](https://img.shields.io/badge/format-Black-111111)](pyproject.toml)
+[![MOEX ISS](https://img.shields.io/badge/data-MOEX%20ISS-lightgrey)](docs/data_sources.md)
+[![Data provenance](https://img.shields.io/badge/provenance-documented-2ea44f)](docs/data_integrity_audit.md)
+[![Live demo](https://img.shields.io/badge/live-demo-brightgreen)](https://russian-markets-lab.streamlit.app/)
 
-Current status: broad research prototype under active hardening. It already has data ingestion, raw and processed dataset storage, analytics modules, notebooks, reports, tests, and a Streamlit dashboard. The project is useful as a portfolio/research stack, but it is still being validated and cleaned up.
+## Links
+
+- [Live demo RU](https://russian-markets-lab.streamlit.app/?lang=ru)
+- [Live demo EN](https://russian-markets-lab.streamlit.app/?lang=en)
+- [Data integrity audit](docs/data_integrity_audit.md)
+- [Project status](docs/project_status.md)
+- [Screenshots](#screenshots)
+
+## Screenshots
+
+The screenshots below use the current Streamlit dashboard with processed datasets loaded and demo mode disabled. Click an image to open the full PNG.
+
+[![Dashboard overview](docs/assets/dashboard-overview.png)](docs/assets/dashboard-overview.png)
+
+[![Liquidity radar](docs/assets/liquidity-radar.png)](docs/assets/liquidity-radar.png)
+
+[![Futures basis](docs/assets/futures-basis.png)](docs/assets/futures-basis.png)
+
+[![Risk engine](docs/assets/risk-engine.png)](docs/assets/risk-engine.png)
+
+## What It Is
+
+Russian Markets Lab is a public proof of market-data and reporting infrastructure. It shows how recurring market snapshots, tables and research reports can be turned into a reproducible dashboard workflow.
+
+The project currently uses public/delayed MOEX ISS data as its implemented data source. Processed datasets are stored as Parquet tables with metadata sidecars, then used by analytics modules, reports and the Streamlit dashboard.
+
+## What It Does
+
+- Builds MOEX market snapshots from public ISS instruments, marketdata and candles.
+- Shows liquidity views with traded value, score components, spread handling and data-quality labels.
+- Tracks futures basis as a rich/fair/cheap diagnostic with confidence labels.
+- Builds options chain features and simplified IV/Greek diagnostics where public fields are usable.
+- Shows portfolio/risk views with historical VaR, CVaR, volatility, drawdown, correlation, stress scenarios and approximate risk contribution.
+- Compares simple execution styles with transparent cost assumptions.
+- Generates HTML reports, notebooks, CLI outputs and dashboard views from the same processed data layer.
+- Exposes real/demo data mode labels, cache/stale state and source metadata.
+
+## What It Is Not
+
+- Not investment advice.
+- Not trading signals.
+- Not a trading bot.
+- Not a broker or execution system.
+- No real order sending.
+- No alpha, profit or arbitrage claims.
+- No silent fake market data.
+
+Demo mode is explicit, opt-in and visibly labeled in the dashboard. It is off by default.
+
+## Data Integrity
+
+Russian Markets Lab separates real processed data, demo data and missing data states.
+
+- Real processed datasets are stored under `data/processed/` with matching `*.metadata.json` sidecars.
+- Metadata includes row count, columns, source, generation time, limitations and `is_demo`.
+- Raw ISS snapshots are local cache artifacts under `data/raw/`.
+- Demo data is isolated in `src/russian_markets_lab/demo/`.
+- The dashboard shows `cache`, `stale`, `demo` or `missing` data modes.
+- Unreadable Parquet files fall back to metadata-backed status instead of reporting fake zero-row data.
+
+Read the full [data integrity audit](docs/data_integrity_audit.md).
 
 ## Workflow
-
-The project follows a simple workflow:
-
-1. Load market data from MOEX ISS.
-2. Save raw and processed datasets.
-3. Calculate research metrics.
-4. Generate notebooks and HTML reports.
-5. Show results in a Streamlit dashboard.
 
 ```text
 MOEX ISS public/delayed data
@@ -29,114 +85,7 @@ MOEX ISS public/delayed data
 -> reports, notebooks, dashboard
 ```
 
-MOEX ISS is the first implemented data source. Most analytics modules work with normalized pandas DataFrames rather than raw MOEX API responses, so parts of the analytics layer can later be reused for CSV files or other market data sources. That is a design direction, not a claim that the project is already fully data-source agnostic.
-
-## What It Does
-
-- Builds a MOEX market universe from instruments, marketdata, and candles.
-- Calculates first-pass liquidity diagnostics: traded value, turnover, spread proxy, volatility penalty, and score components.
-- Monitors futures basis as a rich/fair/cheap screen, not as an arbitrage signal.
-- Builds options chain features, implied volatility, and Greeks where public fields are usable.
-- Estimates portfolio risk from historical daily returns: VaR, CVaR, volatility, drawdown, correlation, and stress scenarios.
-- Compares simple execution styles with transparent cost assumptions: market, limit, TWAP, and VWAP.
-- Provides research notebooks, HTML reports, CLI commands, and a Streamlit dashboard.
-
-## What It Does Not Do
-
-- No broker integration.
-- No real order sending.
-- No private API keys.
-- No personal PnL tracking.
-- No investment advice or trading signals.
-- No performance promises.
-- No silent fake data. Demo data is opt-in and visibly marked.
-
-## Project Layout
-
-```text
-russian-markets-lab/
-  docs/                         methodology, data sources, limitations, audit
-  data/raw/                     local raw cache snapshots
-  data/processed/               parquet datasets with metadata sidecars
-  src/russian_markets_lab/
-    moex_client/                MOEX ISS client and endpoint wrappers
-    data/                       metadata, processed IO, raw cache
-    analytics/                  universe, liquidity, basis, options, risk, execution
-    pipelines/                  raw-to-processed dataset builders
-    strategies/                 research strategy templates
-    backtester/                 vectorized backtest utilities
-    dashboard/                  Streamlit frontend
-    reports/                    HTML report builders
-    scripts/                    orchestration entrypoints
-  notebooks/                    research notebooks
-  tests/                        unit tests without live internet dependency
-```
-
-The dashboard is only a frontend for the processed datasets. The main work happens in the data, analytics, and pipeline modules.
-
-## Data
-
-Russian Markets Lab currently uses MOEX ISS as its main data source.
-
-Processed datasets are stored as Parquet files with JSON metadata sidecars:
-
-- `data/processed/market_universe.parquet`
-- `data/processed/liquidity_radar.parquet`
-- `data/processed/futures_basis.parquet`
-- `data/processed/options_chain_features.parquet`
-- `data/processed/risk_snapshot.parquet`
-- `data/processed/execution_comparison.parquet`
-
-Each processed dataset has a matching `*.metadata.json` file with source, row count, columns, generation time, parameters, limitations, and demo/provenance flags.
-
-Raw ISS snapshots are stored locally under:
-
-```text
-data/raw/<dataset_name>/<timestamp>.parquet
-data/raw/<dataset_name>/<timestamp>.metadata.json
-```
-
-Raw snapshots are local cache artifacts generated when the pipeline runs. They are not manually invented research data and should be treated as cached public/delayed ISS tables, not guaranteed-fresh live feeds.
-
-Use the dataset status command to inspect processed-cache provenance:
-
-```bash
-python -m russian_markets_lab.cli dataset-status
-```
-
-## Modules
-
-1. **MOEX Market Universe Scanner**: instruments, marketdata, candles, tradability, and data quality.
-2. **Liquidity Radar**: liquidity scores, score components, turnover, spread handling, and volume spikes.
-3. **Futures Basis Monitor**: basis, annualized basis, liquidity/confidence labels, and rich/fair/cheap classification.
-4. **Options Volatility Surface**: chain features, moneyness, time to expiry, IV, Greeks, term profile, and surface proxy.
-5. **Portfolio Risk Engine**: historical risk metrics, drawdown, correlation, approximate risk contribution, and stress scenarios.
-6. **Execution Simulator**: spread crossing, slippage, market impact, fill-rate assumptions, and cost comparison.
-7. **Strategy Research Lab**: simple research templates with cost sensitivity and failure analysis.
-8. **Streamlit Dashboard**: EN/RU selector, dataset status, metadata, charts, and explicit demo mode.
-9. **Research Reports**: HTML reports with methodology, metadata, limitations, and disclaimer.
-
-## Dashboard Screenshots
-
-Focused screenshots were generated from the current Streamlit dashboard with processed datasets loaded and demo mode disabled. Click any image to open the full PNG.
-
-[![Dashboard overview](assets/readme_dashboard_overview.png)](assets/readme_dashboard_overview.png)
-
-[![Liquidity radar](assets/readme_liquidity_radar.png)](assets/readme_liquidity_radar.png)
-
-[![Futures basis](assets/readme_futures_basis.png)](assets/readme_futures_basis.png)
-
-[![Risk engine](assets/readme_risk_engine.png)](assets/readme_risk_engine.png)
-
-## Documentation
-
-- [Methodology](docs/methodology.md)
-- [Data Sources](docs/data_sources.md)
-- [Limitations](docs/limitations.md)
-- [Audit](docs/audit.md)
-- [Data Integrity Audit](docs/data_integrity_audit.md)
-- [Project Status](docs/project_status.md)
-- [Public Readiness Review](docs/public_readiness.md)
+MOEX ISS is the first implemented data source. Parts of the analytics layer are written around normalized pandas DataFrames, so the same structure can later be extended to CSV files or other market data sources. This is a design direction, not a claim that the current project is already fully market-agnostic.
 
 ## Quickstart
 
@@ -149,83 +98,95 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-Windows:
-
-```bat
-.venv\Scripts\activate
-```
-
-## Build Data
-
-Build the full research snapshot:
-
-```bash
-python -m russian_markets_lab.cli build-all --tickers-limit 30 --lookback-days 365
-```
-
-Other useful commands:
-
-```bash
-python -m russian_markets_lab.cli build-universe --tickers-limit 30 --lookback-days 365
-python -m russian_markets_lab.cli build-liquidity
-python -m russian_markets_lab.cli build-futures-basis
-python -m russian_markets_lab.cli build-options --max-contracts 200
-python -m russian_markets_lab.cli build-risk
-python -m russian_markets_lab.cli build-execution
-python -m russian_markets_lab.cli dataset-status
-```
-
-## Run Dashboard
+Run the dashboard:
 
 ```bash
 streamlit run src/russian_markets_lab/dashboard/app.py
 ```
 
-The dashboard defaults to Russian, includes an RU/EN selector, and has an explicit demo-mode checkbox. Demo mode is off by default.
-
-## Live Demo
-
-Live demo: https://russian-markets-lab.streamlit.app/
-
-Mobile Russian outreach view: https://russian-markets-lab.streamlit.app/?view=mobile&lang=ru
-
-A Streamlit demo can be deployed from this repository using:
-
-- Repository: `sergey-lastochkin/russian-markets-lab`
-- Branch: `main`
-- Main file path: `src/russian_markets_lab/dashboard/app.py`
-
-The dashboard uses committed processed datasets when available. Demo mode remains off by default.
-
-## Run Checks
+Build the full processed snapshot:
 
 ```bash
-pytest
+python -m russian_markets_lab.cli build-all --tickers-limit 30 --lookback-days 365
+```
+
+Inspect dataset provenance:
+
+```bash
+python -m russian_markets_lab.cli dataset-status
+```
+
+## Checks
+
+These commands are part of the current local hardening flow:
+
+```bash
 python -m compileall src tests
+pytest -q
 ruff check .
 black --check .
-```
-
-Makefile shortcuts:
-
-```bash
+python -m russian_markets_lab.cli dataset-status
 make test
 make lint
-make build-data
-make dashboard
 ```
+
+## Project Structure
+
+```text
+russian-markets-lab/
+  data/processed/               processed parquet datasets and metadata
+  data/raw/                     local public-ISS cache snapshots
+  docs/                         methodology, limitations, audit and status notes
+  notebooks/                    research notebooks
+  reports/                      generated HTML reports
+  src/russian_markets_lab/
+    moex_client/                MOEX ISS endpoint wrappers
+    data/                       cache, metadata and processed IO
+    analytics/                  liquidity, basis, options, risk and execution logic
+    pipelines/                  raw-to-processed dataset builders
+    dashboard/                  Streamlit frontend
+    reports/                    report builders
+    strategies/                 research templates
+  tests/                        unit tests without live internet dependency
+```
+
+The dashboard is a frontend for processed datasets. Core logic stays in the data, analytics and pipeline modules.
+
+## Documentation
+
+- [Methodology](docs/methodology.md)
+- [Data sources](docs/data_sources.md)
+- [Limitations](docs/limitations.md)
+- [Audit](docs/audit.md)
+- [Data integrity audit](docs/data_integrity_audit.md)
+- [Project status](docs/project_status.md)
+- [Public readiness review](docs/public_readiness.md)
+
+## Limitations
+
+- MOEX ISS public data can be delayed, incomplete, sparse or temporarily unavailable.
+- Processed snapshots can become stale if pipelines are not rerun.
+- Futures and options mappings are best-effort diagnostics.
+- Public data does not include full broker routing, queue position or complete order-book depth.
+- Risk metrics are historical and backward-looking.
+- Execution modeling is simplified and does not represent real order placement.
+- The project is intended as a research/reporting demo, not a production trading system.
 
 ## Planned Improvements
 
 - Add CSV input for external market data.
 - Define a cleaner normalized market data schema.
 - Improve futures and options contract mapping.
-- Deepen execution cost and TCA analytics.
+- Deepen execution cost and transaction-cost analysis.
 - Add more realistic examples and research notebooks.
+
+## Portfolio Context
+
+This project is part of a broader market-data/reporting tools portfolio.
 
 ## Disclaimer
 
-This project is for research and educational purposes only. It does not provide investment advice, trading signals, brokerage functionality, or real-money order execution.
+This project is for research, educational and portfolio review purposes. It does not provide investment advice, trading signals, brokerage functionality or real-money order execution.
 
 ## Author and Copyright
 
