@@ -507,7 +507,7 @@ def safe_html(value: object) -> str:
 
     if value is None:
         return ""
-    if isinstance(value, (list, tuple, set)):
+    if isinstance(value, list | tuple | set):
         return escape(", ".join(builtins.str(item) for item in value))
     try:
         if pd.isna(value):
