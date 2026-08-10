@@ -1,5 +1,7 @@
 # Russian Markets Lab
 
+[![CI](https://github.com/sergey-lastochkin/russian-markets-lab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sergey-lastochkin/russian-markets-lab/actions/workflows/ci.yml)
+
 Исследовательский проект на публичных данных MOEX ISS: ликвидность, фьючерсный базис, исторический риск и отчёты Streamlit. Это не торговый робот, не инвестиционный сервис и не источник сигналов.
 
 ![Панель по историческим данным MOEX](assets/readme_dashboard_overview.png)
