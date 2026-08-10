@@ -24,6 +24,16 @@ streamlit run src/russian_markets_lab/dashboard/app.py
 
 Перед выводами о рынке нужно проверить время формирования и `is_demo` каждого набора. Текущий полный build здесь не запускался: зависимости не переустанавливались, а подтверждённый committed dataset остался от `2026-06-19`.
 
+## Проверки
+
+```bash
+PYTHONPATH=src python -m pytest
+ruff check src tests
+python -m compileall -q src tests
+```
+
+Эти проверки используют committed данные и фикстуры. Они не запускают `build-all`, не запрашивают MOEX ISS и не формируют торговые рекомендации.
+
 ## Границы
 
 - Публичный MOEX ISS может быть задержанным, неполным или временно недоступным.
