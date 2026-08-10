@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "russian-markets-lab"
 version = "0.1.0"
-description = "Research platform for MOEX liquidity, derivatives, risk, and execution analysis."
+description = "Исследование ликвидности MOEX, деривативов, исторического риска и исполнения."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Russian Markets Lab" }]

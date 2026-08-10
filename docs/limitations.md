@@ -1,34 +1,29 @@
-# Limitations
+# Ограничения
 
-## Public Data Delay
+## Задержка публичных данных
 
-MOEX ISS public endpoints can be delayed, sparse or temporarily unavailable. This project does not use paid real-time data.
+Публичные endpoint MOEX ISS могут приходить с задержкой, быть неполными или временно недоступными. Платные данные реального времени проект не использует.
 
-## Order Book Depth
+## Глубина стакана
 
-Full depth order book data is generally not available through delayed public endpoints. Spread and execution metrics are diagnostics, not guarantees.
+Полная глубина стакана обычно недоступна через задержанные публичные endpoint. Спред и стоимость исполнения здесь служат диагностикой, а не гарантией.
 
-## No Broker Execution
+## Нет брокерского исполнения
 
-The project has no broker integration and cannot send real orders.
+Проект не подключается к брокеру и не может выставить реальную заявку.
 
-## No Investment Advice
+## Нет инвестиционной рекомендации
 
-Outputs are research diagnostics only. They are not trading recommendations, investment advice or performance promises.
+Результаты нужны для исследования. Они не являются торговой рекомендацией, инвестиционным советом или обещанием доходности.
 
-## Survivorship and Selection Bias
+## Ошибка отбора и выживших
 
-Universe selection by current liquidity can introduce survivorship and selection bias. Historical constituents are not reconstructed.
+Отбор по текущей ликвидности может вносить смещение. Исторический состав индекса не восстанавливается.
 
-## Cached Data Staleness
+## Устаревание кэша
 
-Raw and processed caches can become stale. Metadata sidecars should be checked before using outputs.
+Перед использованием обработанного набора нужно смотреть его метаданные. Кэш может устареть между запусками.
 
-## Derivatives Mapping
+## Деривативы и Black-Scholes
 
-Futures basis is calculated only where public FORTS `ASSETCODE` can be mapped to a TQBR spot ticker. Contract specifications, dividends, borrow and funding are simplified.
-
-## Black-Scholes Limitations
-
-Options analytics use simplified Black-Scholes assumptions. Russian rates, dividends, liquidity, exercise style and settlement conventions can materially affect IV and Greeks.
-
+Фьючерсный базис считается только там, где `ASSETCODE` FORTS удаётся сопоставить со спотовым тикером TQBR. Спецификации контрактов, дивиденды, заём и финансирование упрощены. Для опционов используются упрощающие допущения Black-Scholes: ставки, дивиденды, ликвидность, стиль исполнения и расчётные правила могут заметно влиять на IV и Greeks.

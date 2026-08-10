@@ -1,10 +1,10 @@
-# Methodology
+# Методика
 
-## Market Universe
+## Рынок инструментов
 
-Universe construction starts from public MOEX ISS TQBR shares data. The pipeline loads instruments, current marketdata and daily candles for the most liquid names by current traded value.
+Набор инструментов строится по публичным данным MOEX ISS для акций TQBR. Пайплайн загружает инструменты, рыночные данные и дневные свечи для бумаг с наибольшим текущим оборотом.
 
-Calculated fields:
+Рассчитываются поля:
 
 - `avg_daily_value`: average daily traded value from candles;
 - `median_daily_value`: median daily traded value;
@@ -13,7 +13,7 @@ Calculated fields:
 - `tradable_flag`: true only when value, observation count, volatility and last close pass basic quality gates;
 - `data_quality_score`: observation count, missing close/value ratios and finite volatility.
 
-The universe is a research input, not an investable index.
+Этот набор служит входом для исследования, а не индексом для инвестирования.
 
 ## Realized Volatility
 

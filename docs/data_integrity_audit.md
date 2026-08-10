@@ -1,15 +1,15 @@
-# Data Integrity Audit
+# Проверка целостности данных
 
-Last updated: 2026-06-21.
+Последнее обновление: 2026-06-21.
 
-## Scope
+## Что проверяется
 
-This note checks the main data-integrity risk in Russian Markets Lab:
+Эта заметка проверяет основной риск целостности данных в Russian Markets Lab:
 
-- demo, sample, mock or generated values must not be shown as real market research;
-- missing data must remain missing;
-- cached data must be identifiable as cached or stale;
-- public wording must not imply trading signals, guaranteed freshness or investment advice.
+- демонстрационные, примерные, тестовые и сгенерированные значения нельзя показывать как рыночное исследование;
+- пропущенные данные должны оставаться пропущенными;
+- у кэша должен быть виден его статус и возраст;
+- публичный текст не должен создавать впечатление торгового сигнала, гарантированной свежести или инвестиционной рекомендации.
 
 ## Data Sources
 
@@ -41,7 +41,7 @@ The CLI command `python -m russian_markets_lab.cli dataset-status` reports the m
 
 ## Raw Cache
 
-Raw MOEX snapshots are stored under `data/raw/<dataset_name>/<timestamp>.parquet` when pipelines run locally. These files are cache artifacts from public ISS tables, not manually invented data.
+Исходные снимки MOEX сохраняются в `data/raw/<dataset_name>/<timestamp>.parquet` при локальном запуске пайплайна. Это кэш публичных таблиц ISS, а не вручную придуманные данные.
 
 The repository may not always ship a complete raw history. A missing raw cache is allowed; pipelines should either rebuild from MOEX ISS or use explicitly available cached tables without fabricating data.
 
@@ -82,7 +82,7 @@ Current safeguards:
 ## Remaining Limitations
 
 - MOEX ISS public data can be delayed, unavailable, sparse or revised.
-- Processed snapshots can become stale if pipelines are not rerun.
+- Обработанные снимки могут устареть, если пайплайны не запускались повторно.
 - Public data does not include full broker routing, queue position or complete order-book depth.
 - Futures and options mappings are best effort.
 - Risk metrics are historical diagnostics and do not predict future losses.
